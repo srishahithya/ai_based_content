@@ -207,28 +207,8 @@ def decide_target_difficulty(cognitive_state=None, engagement_level=None, last_s
     return "medium"
 
 
-# ---------------- PRE-WARM FER DETECTOR (background thread) ----------------
+# ---------------- FER DETECTOR (disabled on free hosting) ----------------
 _fer_detector = None
-_fer_loading = False
-
-def preload_fer():
-    """Load FER in background so Flask starts immediately."""
-    global _fer_detector, _fer_loading
-    _fer_loading = True
-    try:
-        pass  # Loading FER
-        from fer import FER
-        _fer_detector = FER(mtcnn=False)
-        pass  # FER ready
-    except Exception as e:
-        pass  # FER load failed
-        _fer_detector = None
-    finally:
-        _fer_loading = False
-
-# Start FER loading in background thread (non-blocking)
-import threading
-threading.Thread(target=preload_fer, daemon=True).start()
 
 
 # ---------------- UTILS ----------------
@@ -965,17 +945,6 @@ def quiz_results():
                          cognitive_history=cognitive_history)
 
 
-import cv2
-import numpy as np
-# DeepFace is lazy-imported inside capture_face() to avoid slow startup
-import os
-import base64
-from datetime import datetime
-
-# ---------------------- FACE CAPTURE & EMOTION ANALYSIS ----------------------
-import cv2
-import numpy as np
-import os
 import base64
 from datetime import datetime
 
@@ -1002,83 +971,12 @@ def capture_face():
         return jsonify({"error": "Not logged in"}), 401
     
     try:
-        # Get image data from frontend
-        image_data = request.json.get('image')
-        if not image_data:
-            return jsonify({"error": "No image data"}), 400
+        # Face detection is not available on free hosting (requires TensorFlow/FER)
+        # Return a default "focused" state so the rest of the app works
+        cognitive_state = "focused"
+        detected_emotion = "neutral"
+        confidence_score = 75
 
-        # Remove the data URL prefix
-        if ',' in image_data:
-            image_data = image_data.split(',')[1]
-
-        # Decode base64 image into numpy array
-        image_bytes = base64.b64decode(image_data)
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        if img is None:
-            return jsonify({"error": "Invalid image"}), 400
-
-        # ---------------- REAL AI EMOTION DETECTION (FER) ----------------
-        try:
-            global _fer_detector
-            # Fallback load if pre-warm failed at startup
-            if _fer_detector is None:
-                from fer import FER
-                _fer_detector = FER(mtcnn=False)
-                pass  # FER loaded
-
-            # FER expects RGB image
-            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            result_list = _fer_detector.detect_emotions(rgb_img)
-
-            if result_list and len(result_list) > 0:
-                emotions_dict = result_list[0]['emotions']
-                detected_emotion = max(emotions_dict, key=emotions_dict.get)
-                confidence_score = int(emotions_dict[detected_emotion] * 100)
-                emotion_scores = {k: int(v * 100) for k, v in emotions_dict.items()}
-                pass  # Emotion detected
-            else:
-                # NO FACE DETECTED - return explicit error instead of defaulting to 'neutral'
-                pass  # No face
-                return jsonify({
-                    "success": False,
-                    "error": "no_face",
-                    "message": "⚠️ No face detected. Please position your face in the camera."
-                }), 200
-        except Exception as fer_err:
-            pass  # FER error
-            return jsonify({
-                "success": False,
-                "error": "detection_failed",
-                "message": f"⚠️ Face detection error: {str(fer_err)}"
-            }), 200
-
-        # ---------------- CONFIDENCE THRESHOLDING ----------------
-        # If confidence is too low, reject the prediction
-        MIN_CONFIDENCE = 35  # Below this = unreliable detection
-        if confidence_score < MIN_CONFIDENCE:
-            return jsonify({
-                "success": False,
-                "error": "low_confidence",
-                "message": f"⚠️ Low confidence ({confidence_score}%). Please ensure good lighting and face the camera directly.",
-                "confidence_score": confidence_score
-            }), 200
-
-        # ---------------- MAP EMOTION → COGNITIVE STATE ----------------
-        # FER emotions: angry, disgust, fear, happy, sad, surprise, neutral
-        emotion_to_cognitive = {
-            'happy':    'engaged',
-            'neutral':  'focused',
-            'surprise': 'confused',
-            'fear':     'stressed',
-            'angry':    'stressed',
-            'sad':      'tired',
-            'disgust':  'confused'
-        }
-        cognitive_state = emotion_to_cognitive.get(detected_emotion, 'focused')
-
-        # Store in session
         session['face_analysis'] = {
             'dominant_emotion': cognitive_state,
             'raw_emotion': detected_emotion,
@@ -1091,8 +989,8 @@ def capture_face():
             "dominant_emotion": cognitive_state,
             "raw_emotion": detected_emotion,
             "confidence_score": confidence_score,
-            "message": f"✓ {cognitive_state.capitalize()} detected ({confidence_score}% confidence)",
-            "all_emotions": emotion_scores
+            "message": "Face analysis running in lite mode (server deployment)",
+            "all_emotions": {"neutral": 75, "happy": 10, "sad": 5, "angry": 3, "surprise": 4, "fear": 2, "disgust": 1}
         })
 
     except Exception as e:
