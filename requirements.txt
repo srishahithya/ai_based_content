@@ -4,16 +4,15 @@ Werkzeug==3.0.1
 gunicorn==21.2.0
 
 # AI / Machine Learning
-tensorflow-cpu==2.15.0
-keras==2.15.0
+tensorflow-cpu>=2.15.0
 fer==22.5.1
 
 # Computer Vision
-opencv-python-headless==4.8.1.78
+opencv-python-headless>=4.8.0
 
 # Data Processing
-numpy==1.24.3
-pandas==2.0.3
+numpy>=1.24.0
+pandas>=2.0.0
 
 # Utilities
-Pillow==10.1.0
+Pillow>=10.0.0
