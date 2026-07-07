@@ -293,18 +293,42 @@ def auto_seed():
                          VALUES (?,?,?,?,?,?,?,?,?)""",
                       (crs_id, subj_id, q, o1, o2, o3, o4, correct, diff))
 
-    # Seed text resources (notes files)
+    # Video and audio URLs per subject
+    media_urls = {
+        "Python": ("https://www.youtube.com/embed/kqtD5dpn9C8", "https://www.youtube.com/embed/rfscVS0vtbw"),
+        "NumPy": ("https://www.youtube.com/embed/QUT1VHiLmmI", "https://www.youtube.com/embed/8JfDAm9y_7s"),
+        "Pandas": ("https://www.youtube.com/embed/vmEHCJofslg", "https://www.youtube.com/embed/zmdjNSmRXF4"),
+        "Core Java": ("https://www.youtube.com/embed/eIrMbAQSU34", "https://www.youtube.com/embed/grEKMHGYyns"),
+        "OOP Concepts": ("https://www.youtube.com/embed/pTB0EiLXUC8", "https://www.youtube.com/embed/6T_HgnjoYwM"),
+        "Introduction to PowerBI": ("https://www.youtube.com/embed/AGrl-H87pRU", "https://www.youtube.com/embed/TmhQCQr_DCA"),
+        "DAX and Visualizations": ("https://www.youtube.com/embed/9OyVYTlZa2Y", "https://www.youtube.com/embed/CGl228sEsuI"),
+        "HTML & CSS": ("https://www.youtube.com/embed/mU6anWqZJcc", "https://www.youtube.com/embed/G3e-cpL7ofc"),
+        "JavaScript": ("https://www.youtube.com/embed/PkZNo7MFNFg", "https://www.youtube.com/embed/hdI2bqOjy3c"),
+        "Supervised Learning": ("https://www.youtube.com/embed/4qVRBYAdLAo", "https://www.youtube.com/embed/ukzFI9rgwfU"),
+    }
+
+    # Seed resources: text notes + video + audio for each subject
     c.execute("SELECT s.id, s.course_id, s.name FROM subjects s")
     for subj_id, crs_id, subj_name in c.fetchall():
+        # Text notes
         notes_filename = f"notes_{crs_id}_{subj_id}.txt"
         notes_path = os.path.join(UPLOAD_FOLDER, notes_filename)
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         if not os.path.exists(notes_path):
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             with open(notes_path, "w", encoding="utf-8") as f:
-                f.write(f"{subj_name} - Study Notes\n\nNotes for {subj_name}.")
+                f.write(f"{subj_name} - Study Notes\n\nComprehensive notes for {subj_name}.")
         c.execute("""INSERT INTO resources(title, file_type, file_path, course_id, subject_id, difficulty)
                      VALUES (?,?,?,?,?,?)""",
-                  (f"{subj_name} - Study Notes", "text", notes_filename, crs_id, subj_id, "medium"))
+                  (f"{subj_name} - Study Notes", "text", f"uploads/{notes_filename}", crs_id, subj_id, "medium"))
+
+        # Video and audio
+        urls = media_urls.get(subj_name, ("https://www.youtube.com/embed/rfscVS0vtbw", "https://www.youtube.com/embed/rfscVS0vtbw"))
+        c.execute("""INSERT INTO resources(title, file_type, file_path, course_id, subject_id, difficulty)
+                     VALUES (?,?,?,?,?,?)""",
+                  (f"{subj_name} - Video Tutorial", "video", urls[0], crs_id, subj_id, "medium"))
+        c.execute("""INSERT INTO resources(title, file_type, file_path, course_id, subject_id, difficulty)
+                     VALUES (?,?,?,?,?,?)""",
+                  (f"{subj_name} - Audio Lecture", "audio", urls[1], crs_id, subj_id, "medium"))
 
     conn.commit()
     conn.close()
