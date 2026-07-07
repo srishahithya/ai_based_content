@@ -173,6 +173,145 @@ def migrate_difficulty():
 migrate_difficulty()
 
 
+# ---------------- AUTO-SEED DATABASE ON STARTUP ----------------
+def auto_seed():
+    """Seed courses, subjects, quizzes, and resources if the database is empty."""
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM courses")
+    if c.fetchone()[0] > 0:
+        conn.close()
+        return  # Already seeded
+
+    # Courses and subjects
+    courses = [
+        ("Data Science", "Learn data science fundamentals", "Beginner",
+         ["Python", "NumPy", "Pandas"]),
+        ("Java", "Master Java programming", "Intermediate",
+         ["Core Java", "OOP Concepts"]),
+        ("PowerBI", "Business analytics with Power BI", "Beginner",
+         ["Introduction to PowerBI", "DAX and Visualizations"]),
+        ("Web Development", "Build modern web applications", "Beginner",
+         ["HTML & CSS", "JavaScript"]),
+        ("Machine Learning", "Learn ML algorithms", "Advanced",
+         ["Supervised Learning"]),
+    ]
+
+    for name, desc, level, subjects in courses:
+        c.execute("INSERT INTO courses(name, description, level) VALUES (?,?,?)",
+                  (name, desc, level))
+        course_id = c.lastrowid
+        for subj in subjects:
+            c.execute("INSERT INTO subjects(course_id, name) VALUES (?,?)",
+                      (course_id, subj))
+
+    conn.commit()
+
+    # Seed quizzes
+    quizzes = {
+        "Python": [
+            ("Which keyword defines a function in Python?", "func", "def", "function", "define", "def", "easy"),
+            ("What is the output of print(type([]))?", "<class 'list'>", "<class 'tuple'>", "<class 'dict'>", "<class 'set'>", "<class 'list'>", "easy"),
+            ("Which method adds to the end of a list?", "push()", "add()", "append()", "insert()", "append()", "medium"),
+            ("What does 'self' refer to in a class?", "The class itself", "The instance", "A static var", "Parent class", "The instance", "medium"),
+            ("What is a lambda function?", "A named function", "An anonymous function", "A recursive function", "A class method", "An anonymous function", "hard"),
+        ],
+        "NumPy": [
+            ("Which creates a NumPy array?", "np.array()", "np.list()", "np.make()", "np.new()", "np.array()", "easy"),
+            ("Default type of np.zeros()?", "int", "float", "bool", "str", "float", "easy"),
+            ("Which gives array shape?", ".size", ".shape", ".dim", ".len", ".shape", "medium"),
+            ("np.arange(0,10,2) returns?", "[0,2,4,6,8]", "[0,1,2]", "[2,4,6,8,10]", "[0,10]", "[0,2,4,6,8]", "medium"),
+            ("Matrix multiplication function?", "np.mul()", "np.dot()", "np.times()", "np.prod()", "np.dot()", "hard"),
+        ],
+        "Pandas": [
+            ("2D structure in Pandas?", "Series", "DataFrame", "Panel", "Array", "DataFrame", "easy"),
+            ("Read CSV in Pandas?", "pd.read_csv()", "pd.load_csv()", "pd.open_csv()", "pd.csv()", "pd.read_csv()", "easy"),
+            ("Drop missing values?", "fill()", "dropna()", "remove()", "clean()", "dropna()", "medium"),
+            ("df.head() returns?", "Last 5 rows", "First 5 rows", "Columns", "Shape", "First 5 rows", "medium"),
+            ("Group data method?", "groupby()", "sortby()", "splitby()", "cluster()", "groupby()", "hard"),
+        ],
+        "Core Java": [
+            ("Keyword to declare a class?", "class", "Class", "new", "define", "class", "easy"),
+            ("Entry point of Java program?", "start()", "main()", "run()", "init()", "main()", "easy"),
+            ("Loop that runs at least once?", "for", "while", "do-while", "foreach", "do-while", "medium"),
+            ("Size of int in Java?", "2 bytes", "4 bytes", "8 bytes", "Depends", "4 bytes", "medium"),
+            ("Keyword to prevent inheritance?", "static", "final", "const", "sealed", "final", "hard"),
+        ],
+        "OOP Concepts": [
+            ("Which hides internal details?", "Inheritance", "Polymorphism", "Encapsulation", "Abstraction", "Encapsulation", "easy"),
+            ("Which allows code reuse?", "Polymorphism", "Inheritance", "Encapsulation", "Overloading", "Inheritance", "easy"),
+            ("Overloading is which polymorphism?", "Runtime", "Compile-time", "Inheritance", "Abstraction", "Compile-time", "medium"),
+            ("Keyword to inherit in Java?", "implements", "extends", "inherits", "super", "extends", "medium"),
+            ("What is an abstract class?", "Only static methods", "Cannot be instantiated", "A final class", "A private class", "Cannot be instantiated", "hard"),
+        ],
+        "Introduction to PowerBI": [
+            ("Power BI is used for?", "Coding", "Data visualization", "Gaming", "Word processing", "Data visualization", "easy"),
+            ("Who developed Power BI?", "Google", "Microsoft", "Oracle", "IBM", "Microsoft", "easy"),
+            ("Build reports in which view?", "Report view", "Data view", "Model view", "Query view", "Report view", "medium"),
+            ("Power BI file format?", ".pbix", ".pbi", ".pwr", ".bix", ".pbix", "medium"),
+            ("Power Query is for?", "Visualization", "Data transformation", "Modeling", "Publishing", "Data transformation", "hard"),
+        ],
+        "DAX and Visualizations": [
+            ("DAX stands for?", "Data Analysis Expressions", "Digital Analytics Extension", "Data Access XML", "Dynamic Axis Engine", "Data Analysis Expressions", "easy"),
+            ("Chart for parts of whole?", "Line", "Pie chart", "Bar", "Scatter", "Pie chart", "easy"),
+            ("Current date in DAX?", "NOW()", "TODAY()", "DATE()", "CURRENT()", "TODAY()", "medium"),
+            ("Sum a column in DAX?", "ADD()", "SUM()", "TOTAL()", "PLUS()", "SUM()", "medium"),
+            ("CALCULATE is used to?", "Modify filter context", "Create tables", "Sort data", "Render visuals", "Modify filter context", "hard"),
+        ],
+        "HTML & CSS": [
+            ("HTML stands for?", "Hyper Text Markup Language", "High Text Machine Language", "Hyperlink Text Mark Language", "Home Tool Markup Language", "Hyper Text Markup Language", "easy"),
+            ("Line break tag?", "<break>", "<lb>", "<br>", "<newline>", "<br>", "easy"),
+            ("CSS property for text color?", "font-color", "text-color", "color", "foreground", "color", "medium"),
+            ("Semantic HTML tag?", "<div>", "<span>", "<article>", "<b>", "<article>", "medium"),
+            ("CSS flex enables?", "Grid layout", "Flexible box layout", "Animation", "Transitions", "Flexible box layout", "hard"),
+        ],
+        "JavaScript": [
+            ("Declares a constant?", "var", "let", "const", "static", "const", "easy"),
+            ("typeof null returns?", "null", "object", "undefined", "number", "object", "easy"),
+            ("Add to end of array?", "push()", "pop()", "shift()", "unshift()", "push()", "medium"),
+            ("What is the DOM?", "Data Object Model", "Document Object Model", "Digital Ordered Map", "Display Object Mode", "Document Object Model", "medium"),
+            ("'this' in arrow function?", "The function", "Global object", "Enclosing lexical scope", "undefined", "Enclosing lexical scope", "hard"),
+        ],
+        "Supervised Learning": [
+            ("Supervised learning uses?", "Unlabeled data", "Labeled data", "No data", "Reward signals", "Labeled data", "easy"),
+            ("Classification algorithm?", "K-Means", "Linear Regression", "Decision Tree", "PCA", "Decision Tree", "easy"),
+            ("Classification metric?", "MSE", "Accuracy", "RMSE", "R-squared", "Accuracy", "medium"),
+            ("Predicts continuous values?", "Logistic Regression", "Linear Regression", "KNN Classifier", "Naive Bayes", "Linear Regression", "medium"),
+            ("What is overfitting?", "Model too simple", "Model fits noise", "Low accuracy", "Fast training", "Model fits noise", "hard"),
+        ],
+    }
+
+    for subj_name, questions in quizzes.items():
+        c.execute("SELECT id, course_id FROM subjects WHERE name=?", (subj_name,))
+        row = c.fetchone()
+        if not row:
+            continue
+        subj_id, crs_id = row
+        for q, o1, o2, o3, o4, correct, diff in questions:
+            c.execute("""INSERT INTO quizzes(course_id, subject_id, question,
+                         option1, option2, option3, option4, correct_option, difficulty)
+                         VALUES (?,?,?,?,?,?,?,?,?)""",
+                      (crs_id, subj_id, q, o1, o2, o3, o4, correct, diff))
+
+    # Seed text resources (notes files)
+    c.execute("SELECT s.id, s.course_id, s.name FROM subjects s")
+    for subj_id, crs_id, subj_name in c.fetchall():
+        notes_filename = f"notes_{crs_id}_{subj_id}.txt"
+        notes_path = os.path.join(UPLOAD_FOLDER, notes_filename)
+        if not os.path.exists(notes_path):
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            with open(notes_path, "w", encoding="utf-8") as f:
+                f.write(f"{subj_name} - Study Notes\n\nNotes for {subj_name}.")
+        c.execute("""INSERT INTO resources(title, file_type, file_path, course_id, subject_id, difficulty)
+                     VALUES (?,?,?,?,?,?)""",
+                  (f"{subj_name} - Study Notes", "text", notes_filename, crs_id, subj_id, "medium"))
+
+    conn.commit()
+    conn.close()
+
+auto_seed()
+
+
 # ---------------- DIFFICULTY ADJUSTMENT (driven by cognitive state) ----------------
 def decide_target_difficulty(cognitive_state=None, engagement_level=None, last_score=None):
     """
