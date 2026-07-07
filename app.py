@@ -370,8 +370,24 @@ def decide_target_difficulty(cognitive_state=None, engagement_level=None, last_s
     return "medium"
 
 
-# ---------------- FER DETECTOR (disabled on free hosting) ----------------
+# ---------------- PRE-WARM FER DETECTOR (background thread) ----------------
 _fer_detector = None
+_fer_loading = False
+
+def preload_fer():
+    """Load FER in background so Flask starts immediately."""
+    global _fer_detector, _fer_loading
+    _fer_loading = True
+    try:
+        from fer import FER
+        _fer_detector = FER(mtcnn=False)
+    except Exception as e:
+        _fer_detector = None
+    finally:
+        _fer_loading = False
+
+import threading
+threading.Thread(target=preload_fer, daemon=True).start()
 
 
 # ---------------- UTILS ----------------
@@ -1108,6 +1124,8 @@ def quiz_results():
                          cognitive_history=cognitive_history)
 
 
+import cv2
+import numpy as np
 import base64
 import random
 from datetime import datetime
@@ -1135,38 +1153,67 @@ def capture_face():
         return jsonify({"error": "Not logged in"}), 401
     
     try:
-        # FER not available on free hosting — simulate varied cognitive states
-        # based on user's past quiz performance for meaningful adaptive learning
-        user_id = session["user_id"]
-        conn = sqlite3.connect("database.db")
-        c = conn.cursor()
-        c.execute("SELECT score FROM quiz_history WHERE user_id=? ORDER BY id DESC LIMIT 1", (user_id,))
-        row = c.fetchone()
-        conn.close()
-        last_score = row[0] if row else None
+        # Get image data from frontend
+        image_data = request.json.get('image')
+        if not image_data:
+            return jsonify({"error": "No image data"}), 400
 
-        # Weight cognitive states based on past performance
-        if last_score is not None and last_score >= 80:
-            # Good performer: more positive states
-            weights = [("focused", 40), ("engaged", 30), ("happy", 15), ("confused", 10), ("tired", 5)]
-        elif last_score is not None and last_score < 50:
-            # Struggling: more negative states
-            weights = [("confused", 30), ("tired", 25), ("stressed", 15), ("focused", 20), ("engaged", 10)]
-        else:
-            # Average or new user: balanced mix
-            weights = [("focused", 30), ("engaged", 25), ("confused", 15), ("tired", 15), ("happy", 15)]
+        # Remove the data URL prefix
+        if ',' in image_data:
+            image_data = image_data.split(',')[1]
 
-        states = [s for s, _ in weights]
-        probs = [w for _, w in weights]
-        cognitive_state = random.choices(states, weights=probs, k=1)[0]
+        # Decode base64 image into numpy array
+        image_bytes = base64.b64decode(image_data)
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-        # Map cognitive state back to raw emotion
-        cognitive_to_emotion = {
-            'engaged': 'happy', 'focused': 'neutral', 'confused': 'surprise',
-            'stressed': 'fear', 'tired': 'sad', 'happy': 'happy'
+        if img is None:
+            return jsonify({"error": "Invalid image"}), 400
+
+        # ---------------- REAL AI EMOTION DETECTION (FER) ----------------
+        try:
+            global _fer_detector
+            if _fer_detector is None:
+                from fer import FER
+                _fer_detector = FER(mtcnn=False)
+
+            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            result_list = _fer_detector.detect_emotions(rgb_img)
+
+            if result_list and len(result_list) > 0:
+                emotions_dict = result_list[0]['emotions']
+                detected_emotion = max(emotions_dict, key=emotions_dict.get)
+                confidence_score = int(emotions_dict[detected_emotion] * 100)
+                emotion_scores = {k: int(v * 100) for k, v in emotions_dict.items()}
+            else:
+                return jsonify({
+                    "success": False,
+                    "error": "no_face",
+                    "message": "No face detected. Please position your face in the camera."
+                }), 200
+        except Exception as fer_err:
+            return jsonify({
+                "success": False,
+                "error": "detection_failed",
+                "message": f"Face detection error: {str(fer_err)}"
+            }), 200
+
+        # ---------------- CONFIDENCE THRESHOLDING ----------------
+        MIN_CONFIDENCE = 35
+        if confidence_score < MIN_CONFIDENCE:
+            return jsonify({
+                "success": False,
+                "error": "low_confidence",
+                "message": f"Low confidence ({confidence_score}%). Please ensure good lighting.",
+                "confidence_score": confidence_score
+            }), 200
+
+        # ---------------- MAP EMOTION TO COGNITIVE STATE ----------------
+        emotion_to_cognitive = {
+            'happy': 'engaged', 'neutral': 'focused', 'surprise': 'confused',
+            'fear': 'stressed', 'angry': 'stressed', 'sad': 'tired', 'disgust': 'confused'
         }
-        detected_emotion = cognitive_to_emotion.get(cognitive_state, 'neutral')
-        confidence_score = random.randint(55, 90)
+        cognitive_state = emotion_to_cognitive.get(detected_emotion, 'focused')
 
         session['face_analysis'] = {
             'dominant_emotion': cognitive_state,
@@ -1180,16 +1227,8 @@ def capture_face():
             "dominant_emotion": cognitive_state,
             "raw_emotion": detected_emotion,
             "confidence_score": confidence_score,
-            "message": f"Detected: {cognitive_state.capitalize()} ({confidence_score}% confidence)",
-            "all_emotions": {
-                "neutral": random.randint(5, 30),
-                "happy": random.randint(5, 30),
-                "sad": random.randint(2, 15),
-                "angry": random.randint(1, 10),
-                "surprise": random.randint(2, 15),
-                "fear": random.randint(1, 10),
-                "disgust": random.randint(1, 5)
-            }
+            "message": f"{cognitive_state.capitalize()} detected ({confidence_score}% confidence)",
+            "all_emotions": emotion_scores
         })
 
     except Exception as e:
