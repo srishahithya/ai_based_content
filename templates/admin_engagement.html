@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monitor Engagement</title>
+</head>
+<body>
+
+<h2>User Engagement</h2>
+
+<table border="1" cellpadding="10">
+<tr>
+    <th>ID</th>
+    <th>User</th>
+    <th>Course</th>
+    <th>Subject</th>
+    <th>Resource</th>
+    <th>Quiz</th>
+    <th>Score</th>
+    <th>Time Spent (sec)</th>
+    <th>Timestamp</th>
+</tr>
+
+{% for a in activities %}
+<tr>
+    <td>{{ a[0] }}</td>
+    <td>{{ a[1] or '-' }}</td>
+    <td>{{ a[2] or '-' }}</td>
+    <td>{{ a[3] or '-' }}</td>
+    <td>{{ a[4] or '-' }}</td>
+    <td>{{ a[5] or '-' }}</td>
+    <td>{{ a[6] if a[6] is not none else '-' }}</td>
+    <td>{{ a[7] if a[7] is not none else '-' }}</td>
+    <td>{{ a[8] }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/admin/dashboard">Back</a>
+
+</body>
+</html>

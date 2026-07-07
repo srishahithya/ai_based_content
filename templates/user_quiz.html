@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .page-layout {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* ---- Camera Sidebar ---- */
+        .camera-sidebar {
+            width: 300px;
+            position: sticky;
+            top: 20px;
+            animation: slideInRight 0.8s ease;
+        }
+
+        .camera-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .camera-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .camera-card h3 i {
+            color: #e74c3c;
+        }
+
+        #quizVideo {
+            width: 100%;
+            border-radius: 10px;
+            border: 3px solid #3498db;
+            transform: scaleX(-1);
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Cognitive State Display */
+        .cognitive-state {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .state-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .state-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .state-emoji {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .confidence-mini-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-mini-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
+
+        .state-history {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .state-history h4 {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .history-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .history-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .history-dot:hover {
+            transform: scale(1.5);
+        }
+
+        .capture-count {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 8px;
+        }
+
+        /* ---- Quiz Styles ---- */
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 2px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin: 25px 0 15px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+            margin: 30px 0;
+        }
+
+        .question {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+        }
+
+        .question:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .question h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .question h3 span {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .options {
+            padding-left: 40px;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .options label:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #3498db;
+        }
+
+        .submit-btn {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .submit-btn i {
+            margin-right: 10px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #3498db;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #2980b9;
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .no-quiz {
+            text-align: center;
+            padding: 30px;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid #f1c40f;
+            margin: 20px 0;
+        }
+
+        .no-quiz i {
+            font-size: 2rem;
+            color: #f1c40f;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .quiz-progress {
+            margin: 20px 0;
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .page-layout {
+                flex-direction: column;
+            }
+            .camera-sidebar {
+                width: 100%;
+                position: static;
+                order: -1;
+            }
+            .camera-card {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 15px;
+            }
+            .camera-card h3 {
+                width: 100%;
+            }
+            #quizVideo {
+                width: 150px;
+                flex-shrink: 0;
+            }
+            .cognitive-state {
+                flex: 1;
+                margin-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-layout">
+        <div class="container">
+            <h1><i class="fas fa-graduation-cap"></i> Take Quiz</h1>
+
+            <form method="POST">
+                <div class="form-group">
+                    <label for="course_id"><i class="fas fa-book"></i> Select Course:</label>
+                    <select name="course_id" id="course_id" onchange="this.form.submit()">
+                        <option value="">-- Select Course --</option>
+                        {% for course in courses %}
+                        <option value="{{ course[0] }}"
+                            {% if selected_course == course[0]|string %}selected{% endif %}>
+                            {{ course[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {% if subjects %}
+                <div class="form-group">
+                    <label for="subject_id"><i class="fas fa-book-open"></i> Select Subject:</label>
+                    <select name="subject_id" id="subject_id" onchange="this.form.submit()">
+                        <option value="">-- Select Subject --</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject[0] }}"
+                            {% if selected_subject == subject[0]|string %}selected{% endif %}>
+                            {{ subject[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </form>
+
+            {% if quiz %}
+            <hr>
+            <h2><i class="fas fa-question-circle"></i> Quiz Questions</h2>
+
+            <div class="quiz-info">
+                <span><i class="fas fa-list-ol"></i> Total Questions: {{ quiz|length }}</span>
+                <span id="timerDisplay"><i class="fas fa-clock"></i> Time: 00:00</span>
+            </div>
+
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="progressBar"></div>
+            </div>
+
+            <form method="POST" action="/user/quiz/submit" id="quizForm" onsubmit="return prepareSubmit();">
+                <!-- Hidden fields for cognitive data -->
+                <input type="hidden" name="cognitive_data" id="cognitiveDataField" value="">
+
+                {% for question in quiz %}
+                <div class="question">
+                    <h3><span>{{ loop.index }}</span> {{ question[3] }}</h3>
+                    <div class="options">
+                        <label>
+                            <input type="radio" name="q{{ question[0] }}" value="{{ question[4] }}" required>
+                            <span>{{ question[4] }}</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="q{{ question[0] }}" value="{{ question[5] }}">
+                            <span>{{ question[5] }}</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="q{{ question[0] }}" value="{{ question[6] }}">
+                            <span>{{ question[6] }}</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="q{{ question[0] }}" value="{{ question[7] }}">
+                            <span>{{ question[7] }}</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="submit-btn" onclick="prepareSubmit()">
+                    <i class="fas fa-paper-plane"></i> Submit Quiz
+                </button>
+            </form>
+            {% elif selected_course and selected_subject %}
+            <div class="no-quiz">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>No quiz questions available for this course and subject.</p>
+            </div>
+            {% endif %}
+
+            <br>
+            <a href="/user/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        {% if quiz %}
+        <!-- Camera Sidebar - Only shown when quiz is active -->
+        <div class="camera-sidebar">
+            <div class="camera-card">
+                <h3><i class="fas fa-video"></i> Cognitive Monitor</h3>
+                <div class="live-badge">
+                    <div class="live-dot"></div>
+                    LIVE
+                </div>
+                <video id="quizVideo" autoplay playsinline muted></video>
+                <canvas id="quizCanvas" style="display:none;"></canvas>
+
+                <div class="cognitive-state">
+                    <div class="state-label">Current Cognitive State</div>
+                    <div class="state-emoji" id="stateEmoji">--</div>
+                    <div class="state-value" id="stateValue">Initializing...</div>
+                    <div class="confidence-mini-bar">
+                        <div class="confidence-mini-fill" id="confidenceFill" style="width: 0%; background: #95a5a6;"></div>
+                    </div>
+                    <div class="capture-count" id="captureCount">Captures: 0</div>
+                </div>
+
+                <div class="state-history">
+                    <h4>State Timeline</h4>
+                    <div class="history-items" id="historyDots"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // ---- Quiz Progress Bar ----
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = document.querySelectorAll('.question');
+            const progressBar = document.getElementById('progressBar');
+
+            if (questions.length > 0 && progressBar) {
+                const radioButtons = document.querySelectorAll('input[type="radio"]');
+                let answeredQuestions = new Set();
+
+                radioButtons.forEach(radioButton => {
+                    radioButton.addEventListener('change', function() {
+                        answeredQuestions.add(this.name);
+                        const progress = (answeredQuestions.size / questions.length) * 100;
+                        progressBar.style.width = progress + '%';
+                    });
+                });
+            }
+        });
+
+        // ---- Timer ----
+        let quizSeconds = 0;
+        const timerDisplay = document.getElementById('timerDisplay');
+        if (timerDisplay && document.querySelector('.question')) {
+            setInterval(function() {
+                quizSeconds++;
+                const mins = String(Math.floor(quizSeconds / 60)).padStart(2, '0');
+                const secs = String(quizSeconds % 60).padStart(2, '0');
+                timerDisplay.innerHTML = '<i class="fas fa-clock"></i> Time: ' + mins + ':' + secs;
+            }, 1000);
+        }
+
+        // ---- Cognitive Monitoring System ----
+        const stateEmojis = {
+            'focused': '🎯',
+            'happy': '😊',
+            'engaged': '🧠',
+            'neutral': '😐',
+            'confused': '😕',
+            'tired': '😴',
+            'stressed': '😰'
+        };
+
+        const stateColors = {
+            'focused': '#27ae60',
+            'happy': '#2ecc71',
+            'engaged': '#3498db',
+            'neutral': '#f39c12',
+            'confused': '#e67e22',
+            'tired': '#e74c3c',
+            'stressed': '#c0392b'
+        };
+
+        let captureCount = 0;
+        let cognitiveHistory = [];
+        let cameraStream = null;
+
+        // Initialize camera for quiz monitoring
+        async function initQuizCamera() {
+            const video = document.getElementById('quizVideo');
+            if (!video) return;
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 300, height: 225, facingMode: "user" }
+                });
+                video.srcObject = stream;
+                cameraStream = stream;
+
+                // Wait for video to be fully ready before first capture
+                video.onloadeddata = function() {
+                    setTimeout(captureAndAnalyze, 5000); // first capture after 5s
+                    setInterval(captureAndAnalyze, 8000); // then every 8s
+                };
+            } catch (err) {
+                console.error("Camera error:", err);
+                const stateVal = document.getElementById('stateValue');
+                if (stateVal) stateVal.textContent = 'Camera unavailable';
+            }
+        }
+
+        // Capture frame and send to backend for analysis
+        async function captureAndAnalyze() {
+            const video = document.getElementById('quizVideo');
+            const canvas = document.getElementById('quizCanvas');
+            if (!video || !canvas || video.readyState < 2) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL('image/jpeg', 0.85);
+
+            try {
+                const response = await fetch('/user/capture_face', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    captureCount++;
+                    updateCognitiveDisplay(result);
+
+                    // Store in history
+                    cognitiveHistory.push({
+                        emotion: result.dominant_emotion,
+                        confidence: result.confidence_score,
+                        time: quizSeconds
+                    });
+                } else {
+                    // Handle no face / low confidence / errors
+                    updateCognitiveError(result);
+                }
+            } catch (err) {
+                console.error("Capture error:", err);
+                updateCognitiveError({message: "⚠️ Connection error. Check your internet."});
+            }
+        }
+
+        // Update the cognitive state display
+        function updateCognitiveDisplay(data) {
+            const emoji = document.getElementById('stateEmoji');
+            const value = document.getElementById('stateValue');
+            const fill = document.getElementById('confidenceFill');
+            const count = document.getElementById('captureCount');
+            const historyDots = document.getElementById('historyDots');
+
+            const emotion = data.dominant_emotion;
+            const confidence = data.confidence_score;
+            const color = stateColors[emotion] || '#95a5a6';
+
+            // Update emoji and text
+            emoji.textContent = stateEmojis[emotion] || '🤔';
+            value.textContent = emotion.charAt(0).toUpperCase() + emotion.slice(1);
+            value.style.color = color;
+
+            // Update confidence bar
+            fill.style.width = confidence + '%';
+            fill.style.backgroundColor = color;
+
+            // Update count
+            count.textContent = 'Captures: ' + captureCount;
+
+            // Add history dot
+            const dot = document.createElement('div');
+            dot.className = 'history-dot';
+            dot.style.backgroundColor = color;
+            dot.title = emotion + ' (' + confidence + '%) at ' + formatTime(quizSeconds);
+            historyDots.appendChild(dot);
+        }
+
+        // Display error states (no face, low confidence, etc.)
+        function updateCognitiveError(result) {
+            const emoji = document.getElementById('stateEmoji');
+            const value = document.getElementById('stateValue');
+            const fill = document.getElementById('confidenceFill');
+
+            // Show warning state
+            emoji.textContent = '⚠️';
+            value.textContent = result.error === 'no_face' ? 'No Face Detected' :
+                               result.error === 'low_confidence' ? 'Low Confidence' : 'Error';
+            value.style.color = '#e74c3c';
+
+            // Red confidence bar
+            fill.style.width = '100%';
+            fill.style.backgroundColor = '#e74c3c';
+
+            // Show message to user
+            console.warn('[COGNITIVE]', result.message || result.error);
+        }
+
+        function formatTime(seconds) {
+            const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            return m + ':' + s;
+        }
+
+        // Prepare cognitive data before quiz submission
+        function prepareSubmit() {
+            const dataField = document.getElementById('cognitiveDataField');
+            if (dataField) {
+                dataField.value = JSON.stringify(cognitiveHistory);
+                console.log('[QUIZ] Submitting with', cognitiveHistory.length, 'cognitive captures');
+                console.log('[QUIZ] Data:', cognitiveHistory);
+            }
+            return true;
+        }
+
+        // Stop camera when leaving page
+        window.addEventListener('beforeunload', function() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Start camera when page loads
+        window.addEventListener('load', initQuizCamera);
+    </script>
+</body>
+</html>

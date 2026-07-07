@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Achievement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .certificate {
+            width: 900px;
+            max-width: 100%;
+            background: white;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .cert-border {
+            border: 8px solid #c9a84c;
+            border-radius: 10px;
+            margin: 15px;
+            padding: 50px 40px;
+            position: relative;
+        }
+
+        .cert-border::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 2px solid #c9a84c;
+            border-radius: 5px;
+        }
+
+        .cert-corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 3px solid #c9a84c;
+        }
+        .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        .cert-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .cert-icon {
+            font-size: 4rem;
+            color: #c9a84c;
+            margin-bottom: 10px;
+        }
+        .cert-title {
+            font-size: 2.8rem;
+            color: #2c3e50;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+        .cert-subtitle {
+            font-size: 1.2rem;
+            color: #c9a84c;
+            letter-spacing: 4px;
+            margin-top: 5px;
+        }
+
+        .cert-body {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cert-presented {
+            font-size: 1rem;
+            color: #7f8c8d;
+            letter-spacing: 2px;
+        }
+        .cert-name {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            font-weight: 700;
+            margin: 15px 0;
+            font-style: italic;
+            border-bottom: 2px solid #c9a84c;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .cert-description {
+            font-size: 1.05rem;
+            color: #555;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .cert-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        .cert-detail-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: #fdf6e3;
+            border-radius: 10px;
+            border: 1px solid #e8d5a3;
+        }
+        .cert-detail-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #2c3e50;
+        }
+        .cert-detail-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .cert-date, .cert-seal {
+            text-align: center;
+        }
+        .cert-date p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .cert-seal-icon {
+            font-size: 3rem;
+            color: #c9a84c;
+        }
+        .cert-seal p {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .cert-id {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #bdc3c7;
+            letter-spacing: 2px;
+        }
+
+        /* Print Button */
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-print {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+        }
+        .btn-back {
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .actions { display: none; }
+            .certificate { box-shadow: none; }
+        }
+
+        @media (max-width: 600px) {
+            .cert-border { padding: 30px 20px; }
+            .cert-title { font-size: 1.8rem; letter-spacing: 4px; }
+            .cert-name { font-size: 1.8rem; }
+            .cert-details { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate" id="certificate">
+        <div class="cert-border">
+            <div class="cert-corner corner-tl"></div>
+            <div class="cert-corner corner-tr"></div>
+            <div class="cert-corner corner-bl"></div>
+            <div class="cert-corner corner-br"></div>
+
+            <div class="cert-header">
+                <div class="cert-icon"><i class="fas fa-award"></i></div>
+                <div class="cert-title">Certificate</div>
+                <div class="cert-subtitle">OF ACHIEVEMENT</div>
+            </div>
+
+            <div class="cert-body">
+                <div class="cert-presented">THIS IS PROUDLY PRESENTED TO</div>
+                <div class="cert-name">{{ user_name }}</div>
+                <div class="cert-description">
+                    For successfully completing the quiz in
+                    <strong>{{ subject }}</strong> under the course
+                    <strong>{{ course }}</strong> with a score of
+                    <strong>{{ score }}%</strong>.
+                </div>
+            </div>
+
+            <div class="cert-details">
+                <div class="cert-detail-item">
+                    <div class="cert-detail-value">{{ score }}%</div>
+                    <div class="cert-detail-label">Score</div>
+                </div>
+                <div class="cert-detail-item">
+                    <div class="cert-detail-value">{{ correct }}/{{ total }}</div>
+                    <div class="cert-detail-label">Correct</div>
+                </div>
+                <div class="cert-detail-item">
+                    <div class="cert-detail-value">
+                        {% if score >= 90 %}Distinction
+                        {% elif score >= 80 %}Excellent
+                        {% elif score >= 70 %}Very Good
+                        {% else %}Good{% endif %}
+                    </div>
+                    <div class="cert-detail-label">Grade</div>
+                </div>
+            </div>
+
+            <div class="cert-footer">
+                <div class="cert-date">
+                    <p><strong>Date: {{ date }}</strong></p>
+                    <p>Adaptive Learning Platform</p>
+                </div>
+                <div class="cert-seal">
+                    <div class="cert-seal-icon"><i class="fas fa-stamp"></i></div>
+                    <p>Verified</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-print" onclick="window.print()">
+            <i class="fas fa-print"></i> Print / Save PDF
+        </button>
+        <a href="/user/quiz_history" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back to History
+        </a>
+    </div>
+</body>
+</html>

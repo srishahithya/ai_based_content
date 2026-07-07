@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
+                        url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsyGreRnRHowFfW5llFi53JCxqdMCprPvyVmFUwHHamqzY0Lb7WfhXrORY6l3S8a0S0GQ&usqp=CAU') center/cover no-repeat fixed;
+            animation: backgroundShift 30s ease infinite;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: center; }
+            50% { background-position: top; }
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: headerShine 3s infinite;
+        }
+
+        @keyframes headerShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .welcome-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInScale 1s ease-out 0.3s backwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: avatarPulse 2s infinite;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            }
+        }
+
+        .user-avatar i {
+            font-size: 24px;
+            color: white;
+        }
+
+        h2 {
+            color: white;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 0;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.2); }
+            to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.4); }
+        }
+
+        .dashboard-content {
+            flex: 1;
+            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out backwards;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-card:nth-child(1) { animation-delay: 0.1s; }
+        .nav-card:nth-child(2) { animation-delay: 0.2s; }
+        .nav-card:nth-child(3) { animation-delay: 0.3s; }
+        .nav-card:nth-child(4) { animation-delay: 0.4s; }
+        .nav-card:nth-child(5) { animation-delay: 0.5s; }
+        .nav-card:nth-child(6) { animation-delay: 0.6s; }
+        .nav-card:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .nav-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-card:hover .card-icon {
+            transform: rotateY(180deg) scale(1.1);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .card-icon i {
+            font-size: 30px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-card:hover .card-icon i {
+            transform: rotateY(180deg);
+        }
+
+        .card-title {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-card:hover .card-title {
+            color: #667eea;
+        }
+
+        .card-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .logout-section {
+            text-align: center;
+            padding: 30px;
+            animation: fadeIn 1s ease-out 0.5s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(238, 90, 36, 0.4);
+            background: linear-gradient(135deg, #ee5a24, #ff6b6b);
+        }
+
+        .logout-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .logout-btn i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .logout-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            left: 5%;
+            top: 10%;
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            right: 5%;
+            top: 50%;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: 8s;
+        }
+
+        .shape:nth-child(3) {
+            width: 120px;
+            height: 120px;
+            left: 50%;
+            bottom: 10%;
+            border-radius: 50%;
+            animation-delay: 15s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-50px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(50px) rotate(240deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .welcome-container {
+                padding: 12px 20px;
+            }
+
+            .dashboard-content {
+                padding: 30px 15px;
+            }
+        }
+
+        /* Remove default list styling */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header class="dashboard-header">
+        <div class="welcome-container">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2>Welcome, {{ user_name }}</h2>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <ul class="nav-grid">
+            <li>
+                <a href="/user/learning_style" class="nav-card">
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="card-title">Select Learning Style</h3>
+                    <p class="card-description">Choose your preferred learning method for personalized education experience</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/courses" class="nav-card">
+                    <div class="card-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3 class="card-title">Choose Course & Subject</h3>
+                    <p class="card-description">Browse and select from our wide range of courses and subjects</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/quiz" class="nav-card">
+                    <div class="card-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="card-title">Take Quiz</h3>
+                    <p class="card-description">Test your knowledge and track your progress with interactive quizzes</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/adaptive_learning" class="nav-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="card-title">Adaptive Learning</h3>
+                    <p class="card-description">Experience personalized learning that adapts to your pace and style</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/performance" class="nav-card">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="card-title">Performance Dashboard</h3>
+                    <p class="card-description">View your progress with interactive charts and analytics</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/quiz_history" class="nav-card">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="card-title">Quiz History</h3>
+                    <p class="card-description">Review all your past quiz attempts, scores and certificates</p>
+                </a>
+            </li>
+            <li>
+                <a href="/user/leaderboard" class="nav-card">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #f7971e, #ffd200);">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="card-title">Leaderboard</h3>
+                    <p class="card-description">See how you rank against other students on the platform</p>
+                </a>
+            </li>
+        </ul>
+
+        <div class="logout-section">
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </main>
+</body>
+</html>

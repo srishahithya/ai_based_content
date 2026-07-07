@@ -1,0 +1,91 @@
+PYTHON PROGRAMMING - COMPLETE NOTES
+
+1. INTRODUCTION TO PYTHON
+Python is a high-level, interpreted programming language known for its simplicity and readability.
+Created by Guido van Rossum in 1991, Python supports multiple programming paradigms.
+
+2. KEY FEATURES
+- Easy to learn and read
+- Interpreted language (no compilation needed)
+- Dynamically typed
+- Object-oriented
+- Large standard library
+- Cross-platform
+
+3. BASIC SYNTAX
+# Variables
+name = "Student"
+age = 20
+price = 99.99
+
+# Print output
+print("Hello, World!")
+print(f"Name: {name}, Age: {age}")
+
+# Conditional statements
+if age >= 18:
+    print("Adult")
+else:
+    print("Minor")
+
+4. DATA TYPES
+- int: Integer numbers (10, -5, 100)
+- float: Decimal numbers (3.14, -0.5)
+- str: Text ("Hello")
+- bool: True/False
+- list: Ordered collection [1, 2, 3]
+- dict: Key-value pairs {"name": "John"}
+- tuple: Immutable list (1, 2, 3)
+- set: Unique values {1, 2, 3}
+
+5. LOOPS
+# For loop
+for i in range(5):
+    print(i)
+
+# While loop
+count = 0
+while count < 5:
+    print(count)
+    count += 1
+
+6. FUNCTIONS
+def greet(name):
+    return f"Hello, {name}!"
+
+result = greet("Alice")
+print(result)
+
+7. OBJECT-ORIENTED PROGRAMMING
+class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def introduce(self):
+        return f"I am {self.name}, {self.age} years old"
+
+8. FILE HANDLING
+# Read file
+with open("file.txt", "r") as f:
+    content = f.read()
+
+# Write file
+with open("output.txt", "w") as f:
+    f.write("Hello")
+
+9. POPULAR LIBRARIES
+- NumPy: Numerical computing
+- Pandas: Data analysis
+- Matplotlib: Data visualization
+- Scikit-learn: Machine learning
+- TensorFlow/PyTorch: Deep learning
+- Flask/Django: Web development
+
+10. BEST PRACTICES
+- Use meaningful variable names
+- Write comments for complex logic
+- Follow PEP 8 style guide
+- Use virtual environments
+- Write unit tests
+- Handle exceptions properly

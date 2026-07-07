@@ -1,0 +1,93 @@
+DAX AND ADVANCED VISUALIZATIONS - POWER BI
+
+1. WHAT IS DAX?
+Data Analysis Expressions (DAX) is a formula language used in Power BI,
+Excel Power Pivot, and Analysis Services. It's similar to Excel formulas
+but more powerful.
+
+2. DAX SYNTAX
+Measure Name = FUNCTION(Table[Column])
+
+Example:
+Total Revenue = SUM(Sales[Amount])
+
+3. COMMON DAX FUNCTIONS
+
+A) Aggregation Functions
+- SUM(column)
+- AVERAGE(column)
+- MIN(column), MAX(column)
+- COUNT(column)
+- COUNTROWS(table)
+- DISTINCTCOUNT(column)
+
+B) Logical Functions
+- IF(condition, true_result, false_result)
+- SWITCH(expression, value1, result1, ...)
+- AND(), OR(), NOT()
+
+C) Filter Functions
+- CALCULATE(expression, filter)
+- FILTER(table, condition)
+- ALL(table), ALLEXCEPT()
+- RELATED(column)
+
+D) Time Intelligence
+- TOTALYTD(expression, dates)
+- SAMEPERIODLASTYEAR(dates)
+- DATEADD(dates, -1, MONTH)
+- DATESBETWEEN(dates, start, end)
+
+4. CALCULATED COLUMNS VS MEASURES
+Calculated Column:
+- Evaluated row by row
+- Stored in the table
+- Uses row context
+Example: Full Name = [First Name] & " " & [Last Name]
+
+Measure:
+- Evaluated based on filter context
+- Not stored (calculated on demand)
+- More efficient
+Example: Total Sales = SUM(Sales[Amount])
+
+5. VISUALIZATIONS GUIDE
+
+When to use what:
+- Comparison: Bar/Column charts
+- Trend over time: Line chart
+- Parts of whole: Pie/Donut (only if <5 categories)
+- Distribution: Histogram, Box plot
+- Correlation: Scatter plot
+- Geographic: Maps
+- KPIs: Cards, Gauges
+- Hierarchical: Tree map
+
+6. FORMATTING BEST PRACTICES
+- Consistent color scheme
+- Clear titles and labels
+- Remove chart junk
+- Use whitespace effectively
+- Highlight important data
+- Keep it simple
+
+7. INTERACTIVITY
+- Slicers for filtering
+- Cross-filtering between visuals
+- Drill-through for detail pages
+- Bookmarks for scenarios
+- Buttons for navigation
+
+8. MOBILE OPTIMIZATION
+- Create mobile layout
+- Use vertical orientation
+- Larger fonts for touch
+- Simpler visuals
+- Test on actual devices
+
+9. PERFORMANCE TIPS
+- Limit number of visuals per page
+- Use aggregations for large datasets
+- Avoid calculated columns when possible
+- Use variables in DAX
+- Filter data at source

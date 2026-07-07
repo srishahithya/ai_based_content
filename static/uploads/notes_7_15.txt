@@ -1,0 +1,112 @@
+SUPERVISED LEARNING - COMPLETE NOTES
+
+1. WHAT IS SUPERVISED LEARNING?
+Supervised learning is a type of machine learning where the model learns from
+labeled data (input-output pairs). The goal is to predict outputs for new inputs.
+
+2. TYPES OF SUPERVISED LEARNING
+
+A) CLASSIFICATION
+Predicting discrete categories/classes.
+Examples:
+- Email: Spam or Not Spam
+- Image: Cat, Dog, or Bird
+- Medical: Disease or Healthy
+
+B) REGRESSION
+Predicting continuous numerical values.
+Examples:
+- House price prediction
+- Stock price forecasting
+- Temperature prediction
+
+3. COMMON ALGORITHMS
+
+A) LINEAR REGRESSION
+Predicts a continuous value using a linear equation.
+y = mx + b
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+B) LOGISTIC REGRESSION
+Used for binary classification despite the name.
+Outputs probability between 0 and 1.
+
+C) DECISION TREES
+Tree-like model of decisions.
+Easy to interpret but prone to overfitting.
+
+D) RANDOM FOREST
+Ensemble of decision trees.
+Reduces overfitting, better accuracy.
+
+E) SUPPORT VECTOR MACHINES (SVM)
+Finds the best boundary between classes.
+Works well in high-dimensional spaces.
+
+F) K-NEAREST NEIGHBORS (KNN)
+Classifies based on majority vote of k nearest points.
+Simple but computationally expensive.
+
+G) NEURAL NETWORKS
+Multiple layers of interconnected nodes.
+Can learn complex patterns.
+
+4. WORKFLOW STEPS
+
+1. Data Collection
+2. Data Cleaning (handle missing values, outliers)
+3. Feature Engineering
+4. Split into Train/Test sets (usually 80/20)
+5. Choose Algorithm
+6. Train the Model
+7. Evaluate Performance
+8. Tune Hyperparameters
+9. Deploy
+
+5. EVALUATION METRICS
+
+For Classification:
+- Accuracy = Correct / Total
+- Precision = TP / (TP + FP)
+- Recall = TP / (TP + FN)
+- F1 Score = 2 * (Precision * Recall) / (Precision + Recall)
+- Confusion Matrix
+
+For Regression:
+- Mean Absolute Error (MAE)
+- Mean Squared Error (MSE)
+- Root Mean Squared Error (RMSE)
+- R-squared (R²)
+
+6. OVERFITTING AND UNDERFITTING
+- Overfitting: Model memorizes training data, poor on new data
+- Underfitting: Model too simple, poor on both sets
+
+Solutions:
+- Cross-validation
+- Regularization (L1, L2)
+- More training data
+- Feature selection
+- Simpler model
+
+7. PRACTICAL EXAMPLE (PYTHON)
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = RandomForestClassifier(n_estimators=100)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+predictions = model.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+print(f"Accuracy: {accuracy}")

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                        url('https://www.shutterstock.com/image-photo/concept-online-education-man-use-260nw-2261187877.jpg') center/cover no-repeat fixed;
+            animation: backgroundShift 20s ease infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: center; }
+            50% { background-position: top; }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            font-weight: 600;
+            position: relative;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out;
+        }
+
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 60px; }
+        }
+
+        form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            animation: fadeInLeft 0.8s ease-out backwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: color 0.3s ease;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        input:focus + label {
+            color: #667eea;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        button[type="submit"]:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            animation: fadeIn 1s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .login-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .login-link a:hover::after {
+            width: 100%;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            top: 20%;
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            right: 10%;
+            top: 60%;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            left: 50%;
+            bottom: 10%;
+            border-radius: 50%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-30px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(30px) rotate(240deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="form-container">
+        <h2>User Registration</h2>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <div class="login-link">
+            <a href="/user/login">Already Registered? Login</a>
+        </div>
+    </div>
+</body>
+</html>

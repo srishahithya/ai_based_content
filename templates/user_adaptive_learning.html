@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adaptive Learning</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-image: url('https://picsum.photos/seed/adaptivelearning/1920/1080.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Overlay for better text visibility */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.85) 0%, rgba(36, 59, 85, 0.85) 100%);
+            z-index: -1;
+        }
+
+        /* Animated background pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            animation: floatPattern 25s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes floatPattern {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-10px, -10px) rotate(1deg); }
+            66% { transform: translate(10px, -5px) rotate(-1deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 2px;
+        }
+
+        .section {
+            margin: 30px 0;
+            padding: 25px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 i {
+            font-size: 1.5rem;
+            color: #4facfe;
+        }
+
+        .camera-section {
+            background: linear-gradient(135deg, rgba(227, 242, 253, 0.2) 0%, rgba(187, 222, 251, 0.2) 100%);
+            text-align: center;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, rgba(243, 229, 245, 0.2) 0%, rgba(225, 190, 231, 0.2) 100%);
+            border: 1px solid rgba(186, 104, 200, 0.3);
+        }
+
+        .recommendations-section {
+            background: linear-gradient(135deg, rgba(232, 245, 233, 0.2) 0%, rgba(200, 230, 201, 0.2) 100%);
+            border: 1px solid rgba(102, 187, 106, 0.3);
+        }
+
+        #video, #canvas {
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #4facfe;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #video:hover, #canvas:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .capture-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.3);
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .emotion-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffa726, #66bb6a);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .resource-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .resource-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .resource-card h4 {
+            margin-bottom: 10px;
+            color: #4facfe;
+        }
+
+        .resource-card p {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            color: white;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle 20s infinite linear;
+            z-index: -1;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .section h2 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links a {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="width: 8px; height: 8px; left: 5%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 12px; height: 12px; left: 25%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 45%; animation-delay: 6s;"></div>
+    <div class="particle" style="width: 10px; height: 10px; left: 65%; animation-delay: 9s;"></div>
+    <div class="particle" style="width: 7px; height: 7px; left: 85%; animation-delay: 12s;"></div>
+
+    <div class="container">
+        <h1>🎯 Adaptive Learning</h1>
+        
+        <!-- Quiz Results Section -->
+        {% if total > 0 %}
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Quiz Results</h2>
+            <div class="score-display" style="color: 
+                {% if score >= 80 %}#28a745
+                {% elif score >= 60 %}#ffc107
+                {% else %}#dc3545
+                {% endif %};">
+                Score: {{ score }}% ({{ correct }}/{{ total }})
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Camera Section -->
+        <div class="section camera-section">
+            <h2><i class="fas fa-camera"></i> Capture Your Learning State</h2>
+            <p>Take a selfie to get personalized learning recommendations based on your current state</p>
+            
+            <div id="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" class="hidden"></canvas>
+            </div>
+            
+            <button class="btn capture-btn" onclick="captureImage()">
+                <i class="fas fa-camera"></i> Capture Selfie
+            </button>
+            <button class="btn analyze-btn" onclick="analyzeFace()" id="analyzeBtn" disabled>
+                <i class="fas fa-brain"></i> Get Recommendations
+            </button>
+            
+            <div id="capturedImage" class="hidden"></div>
+            <div id="loadingMessage" class="hidden loading">
+                <i class="fas fa-spinner"></i> Analyzing your learning state...
+            </div>
+        </div>
+
+        <!-- Analysis Results Section -->
+        <div class="section results-section hidden" id="resultsSection">
+            <h2><i class="fas fa-chart-bar"></i> Learning State Analysis</h2>
+            <div id="analysisResults"></div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="section recommendations-section hidden" id="recommendationsSection">
+            <h2><i class="fas fa-graduation-cap"></i> Personalized Recommendations</h2>
+            <div id="recommendationsList"></div>
+            <button class="btn capture-btn" onclick="getNewRecommendations()">
+                <i class="fas fa-sync-alt"></i> Get New Recommendations
+            </button>
+        </div>
+
+        <div class="nav-links">
+            <a href="/user/quiz"><i class="fas fa-question-circle"></i> Take Another Quiz</a> 
+            <a href="/user/courses"><i class="fas fa-book"></i> Back to Courses</a> 
+            <a href="/user/dashboard"><i class="fas fa-home"></i> Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        let capturedImageData = null;
+        
+        // Initialize camera
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: 500, 
+                        height: 375,
+                        facingMode: "user" // Front camera
+                    } 
+                });
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                alert("Cannot access camera. Please check permissions and make sure you're using HTTPS.");
+            }
+        }
+        
+        // Capture image from camera
+        function captureImage() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            capturedImageData = canvas.toDataURL('image/jpeg');
+            
+            // Show captured image
+            const capturedDiv = document.getElementById('capturedImage');
+            capturedDiv.innerHTML = `
+                <h3>Captured Image:</h3>
+                <img src="${capturedImageData}" style="max-width: 300px; border-radius: 8px; border: 2px solid #28a745;">
+            `;
+            capturedDiv.classList.remove('hidden');
+            
+            // Enable analyze button
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+        
+        // Analyze face and get recommendations
+        async function analyzeFace() {
+            if (!capturedImageData) {
+                alert('Please capture an image first');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loadingMessage').classList.remove('hidden');
+            document.getElementById('analyzeBtn').disabled = true;
+            
+            try {
+                const response = await fetch('/user/capture_face', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: capturedImageData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loadingMessage').classList.add('hidden');
+                
+                if (result.success) {
+                    displayAnalysisResults(result);
+                    getRecommendations();
+                } else {
+                    alert('Analysis failed: ' + (result.error || 'Unknown error'));
+                    document.getElementById('analyzeBtn').disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error processing image');
+                document.getElementById('loadingMessage').classList.add('hidden');
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        }
+        
+        // Display analysis results
+        function displayAnalysisResults(data) {
+            const resultsDiv = document.getElementById('analysisResults');
+            
+            // Get color based on confidence score
+            let confidenceColor = '#dc3545'; // red
+            if (data.confidence_score >= 70) confidenceColor = '#28a745'; // green
+            else if (data.confidence_score >= 40) confidenceColor = '#ffc107'; // yellow
+            
+            resultsDiv.innerHTML = `
+                <div class="emotion-display" style="color: ${confidenceColor}">
+                    Learning Confidence: ${data.confidence_score}%
+                </div>
+                <div style="color: white; margin: 15px 0;">
+                    <strong>Detected State:</strong> ${data.dominant_emotion.toUpperCase()}
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" style="width: ${data.confidence_score}%"></div>
+                </div>
+                <div style="color: white; margin: 15px 0;">
+                    <strong>Message:</strong> ${data.message}
+                </div>
+            `;
+            
+            document.getElementById('resultsSection').classList.remove('hidden');
+        }
+        
+        // Get personalized recommendations
+        async function getRecommendations() {
+            try {
+                const response = await fetch('/user/get_recommendations');
+                const data = await response.json();
+                
+                displayRecommendations(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting recommendations');
+            }
+        }
+        
+        // Display recommendations
+        function displayRecommendations(data) {
+            const recDiv = document.getElementById('recommendationsList');
+            
+            recDiv.innerHTML = `
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; color: white;">
+                    <strong>Learning State:</strong> <span style="color: ${
+                        data.learning_state === 'confident' ? '#28a745' : 
+                        data.learning_state === 'moderate' ? '#ffc107' : '#dc3545'
+                    }">${data.learning_state.toUpperCase()}</span><br>
+                    <strong>Confidence Score:</strong> ${data.confidence_score}%<br>
+                    <strong>Quiz Score:</strong> ${data.quiz_score}%<br>
+                    <strong>Message:</strong> ${data.message}
+                </div>
+                <h3 style="color: white; margin-bottom: 15px;">Recommended Resources (${data.recommendations.length}):</h3>
+                ${data.recommendations.map(rec => `
+                    <div class="resource-card">
+                        <h4>📚 ${rec.title}</h4>
+                        <p><strong>Type:</strong> ${rec.type.toUpperCase()} 
+                        ${rec.course ? `<br><strong>Course:</strong> ${rec.course}` : ''}
+                        ${rec.subject ? `<br><strong>Subject:</strong> ${rec.subject}` : ''}
+                        </p>
+                        <a href="${rec.file_path.startsWith('http') ? rec.file_path : '/static/' + rec.file_path}" target="_blank" class="btn capture-btn" style="padding: 8px 16px;" onclick="trackResourceView(${rec.id})">
+                            <i class="fas fa-${rec.type === 'video' || rec.type === 'audio' ? 'play-circle' : 'book-open'}"></i> ${rec.type === 'video' || rec.type === 'audio' ? 'Watch/Listen' : 'View Resource'}
+                        </a>
+                    </div>
+                `).join('')}
+            `;
+            
+            document.getElementById('recommendationsSection').classList.remove('hidden');
+        }
+        
+        // Get new recommendations
+        function getNewRecommendations() {
+            getRecommendations();
+        }
+
+        // Track when user clicks a resource (for preferred format detection)
+        async function trackResourceView(resourceId) {
+            try {
+                await fetch('/user/track_resource_view', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resource_id: resourceId })
+                });
+                console.log('[TRACKING] Resource view logged:', resourceId);
+            } catch (error) {
+                console.error('[TRACKING] Error:', error);
+            }
+        }
+
+        // Initialize camera when page loads
+        window.onload = initCamera;
+    </script>
+</body>
+</html>

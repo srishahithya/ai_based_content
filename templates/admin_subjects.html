@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Subjects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background-image: url('https://picsum.photos/seed/managesubjects/1920/1080.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Overlay gradient */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.92) 0%, rgba(36, 59, 85, 0.92) 100%);
+            z-index: 1;
+        }
+
+        /* Animated background pattern */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            animation: floatPattern 25s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes floatPattern {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-10px, -10px) rotate(1deg); }
+            66% { transform: translate(10px, -5px) rotate(-1deg); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        h2 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Icon in heading */
+        h2 i {
+            margin-right: 1rem;
+            color: #4facfe;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Animated underline */
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            animation: expandLine 1s ease-out forwards;
+            animation-delay: 0.3s;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        @keyframes expandLine {
+            to { width: 100%; }
+        }
+
+        /* Form container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: end;
+        }
+
+        label {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        label i {
+            color: #4facfe;
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        label:nth-of-type(1) { animation-delay: 0.3s; }
+        label:nth-of-type(2) { animation-delay: 0.5s; }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Input styling */
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        select { animation-delay: 0.4s; }
+        input[type="text"] { animation-delay: 0.6s; }
+
+        /* Select styling */
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+
+        /* Select option styling */
+        select option {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+        }
+
+        /* Focus effects */
+        select:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Button styling */
+        button {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            justify-self: start;
+        }
+
+        button i {
+            font-size: 1.1rem;
+        }
+
+        /* Shimmer effect on button */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Horizontal rule */
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        hr::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            animation: expandLine 3s ease-out infinite;
+            animation-delay: 1s;
+        }
+
+        /* Section headers */
+        h3 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 2rem 0 1.5rem;
+            position: relative;
+            padding-left: 2rem;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+
+        h3 i {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4facfe;
+            font-size: 1.5rem;
+        }
+
+        /* Table container */
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+            overflow-x: auto;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Table header */
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        th i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        th:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Table rows */
+        tr {
+            transition: all 0.3s ease;
+            animation: fadeInRow 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        tr:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Staggered row animations */
+        tr:nth-child(2) { animation-delay: 0.1s; }
+        tr:nth-child(3) { animation-delay: 0.2s; }
+        tr:nth-child(4) { animation-delay: 0.3s; }
+        tr:nth-child(5) { animation-delay: 0.4s; }
+        tr:nth-child(6) { animation-delay: 0.5s; }
+        tr:nth-child(7) { animation-delay: 0.6s; }
+        tr:nth-child(8) { animation-delay: 0.7s; }
+
+        @keyframes fadeInRow {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+        }
+
+        /* Table cells */
+        td {
+            padding: 1.2rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Row hover effects */
+        tr:hover td {
+            background: rgba(79, 172, 254, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        tr:hover td:first-child {
+            border-left: 3px solid #4facfe;
+        }
+
+        /* ID cell styling */
+        td:first-child {
+            font-weight: 600;
+            color: #4facfe;
+            position: relative;
+        }
+
+        td:first-child::before {
+            content: '#';
+            margin-right: 0.3rem;
+            opacity: 0.5;
+        }
+
+        /* Subject name cell styling */
+        td:nth-child(2) {
+            font-weight: 500;
+        }
+
+        /* Course cell styling */
+        td:nth-child(3) {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Back button */
+        .back-container {
+            text-align: center;
+            margin-top: 3rem;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+        }
+
+        .back-container a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-container a i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-container a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-container a:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* Shimmer effect */
+        .back-container a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-container a:hover::before {
+            left: 100%;
+        }
+
+        /* Success message */
+        .success-message {
+            display: none;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 10px;
+            color: #4caf50;
+            text-align: center;
+            margin-top: 1rem;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        /* Stats cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            animation: fadeInScale 0.8s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4facfe;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle 20s infinite linear;
+            z-index: 3;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            .form-container,
+            .table-container {
+                padding: 1rem;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="width: 8px; height: 8px; left: 5%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 12px; height: 12px; left: 25%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 45%; animation-delay: 6s;"></div>
+    <div class="particle" style="width: 10px; height: 10px; left: 65%; animation-delay: 9s;"></div>
+    <div class="particle" style="width: 7px; height: 7px; left: 85%; animation-delay: 12s;"></div>
+
+    <div class="container">
+        <header>
+            <h2><i class="fas fa-book-open"></i>Manage Subjects</h2>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-graduation-cap"></i>
+                <div class="stat-number">{{ courses|length }}</div>
+                <div class="stat-label">Total Courses</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-book"></i>
+                <div class="stat-number">{{ subjects|length }}</div>
+                <div class="stat-label">Total Subjects</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="stat-number">{{ (subjects|length / courses|length * 100)|round(1) }}%</div>
+                <div class="stat-label">Avg Subjects/Course</div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('admin_subjects') }}" id="subjectForm">
+                <label for="course_id"><i class="fas fa-graduation-cap"></i>Course:</label>
+                <select id="course_id" name="course_id" required>
+                    <option value="">Select Course</option>
+                    {% for course in courses %}
+                    <option value="{{ course[0] }}">{{ course[1] }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="subject_name"><i class="fas fa-book"></i>Subject Name:</label>
+                <input type="text" id="subject_name" name="subject_name" required placeholder="Enter subject name">
+
+                <button type="submit" class="full-width">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Subject
+                </button>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> Subject added successfully!
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="table-container">
+            <h3><i class="fas fa-list"></i>Existing Subjects</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i>ID</th>
+                        <th><i class="fas fa-book"></i>Subject Name</th>
+                        <th><i class="fas fa-graduation-cap"></i>Course</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject[0] }}</td>
+                        <td>{{ subject[1] }}</td>
+                        <td>{{ subject[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="back-container">
+            <a href="/admin/dashboard">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Form submission with loading state
+        document.getElementById('subjectForm').addEventListener('submit', function(e) {
+            const button = this.querySelector('button');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Subject...';
+            
+            // Simulate form submission (remove this in production)
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i> Subject Added!';
+                successMessage.style.display = 'block';
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    this.reset();
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-plus-circle"></i> Add Subject';
+                    successMessage.style.display = 'none';
+                }, 2000);
+            }, 1500);
+            
+            // In production, remove the setTimeout and let the form submit normally
+            // e.preventDefault(); // Uncomment this to prevent actual submission for demo
+        });
+
+        // Add interactive effects to form inputs
+        const inputs = document.querySelectorAll('select, input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add row click interaction
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', function() {
+                // Remove previous selection
+                document.querySelectorAll('tbody tr').forEach(r => {
+                    r.style.background = '';
+                });
+                
+                // Highlight selected row
+                this.style.background = 'rgba(79, 172, 254, 0.2)';
+                
+                // Add ripple effect
+                const ripple = document.createElement('div');
+                const rect = this.getBoundingClientRect();
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(79, 172, 254, 0.3);
+                    left: 0;
+                    top: 0;
+                    animation: rippleEffect 0.6s ease-out forwards;
+                    pointer-events: none;
+                `;
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleEffect {
+                to {
+                    opacity: 0;
+                    transform: scale(1.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Animate stat numbers on page load
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Animate stat numbers when page loads
+        window.addEventListener('load', () => {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            animateValue(statNumbers[0], 0, {{ courses|length }}, 1500);
+            animateValue(statNumbers[1], 0, {{ subjects|length }}, 1500);
+        });
+    </script>
+</body>

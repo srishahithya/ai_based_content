@@ -1,0 +1,67 @@
+PYTHON PROGRAMMING - COMPLETE NOTES
+
+1. INTRODUCTION TO PYTHON
+Python is a high-level, interpreted programming language known for its simplicity and readability.
+Created by Guido van Rossum in 1991. Used for web development, data science, AI, automation.
+
+2. KEY FEATURES
+- Easy to learn and read syntax
+- Interpreted (no compilation)
+- Dynamically typed
+- Object-oriented and functional
+- Huge standard library
+- Cross-platform compatible
+
+3. BASIC SYNTAX
+# Variables and printing
+name = "Student"
+age = 20
+print(f"Hello, {name}! You are {age} years old")
+
+# Conditional
+if age >= 18:
+    print("Adult")
+else:
+    print("Minor")
+
+4. DATA TYPES
+- int: 10, -5, 1000
+- float: 3.14, -0.5
+- str: "Hello"
+- bool: True, False
+- list: [1, 2, 3]
+- tuple: (1, 2, 3)
+- dict: {"key": "value"}
+- set: {1, 2, 3}
+
+5. LOOPS AND FUNCTIONS
+# For loop
+for i in range(5):
+    print(i)
+
+# Function definition
+def add(a, b):
+    return a + b
+
+result = add(3, 5)  # result = 8
+
+6. OBJECT-ORIENTED PROGRAMMING
+class Student:
+    def __init__(self, name):
+        self.name = name
+    def greet(self):
+        return f"Hi, I'm {self.name}"
+
+7. POPULAR LIBRARIES
+- NumPy: Numerical computing
+- Pandas: Data analysis
+- Matplotlib: Visualization
+- Scikit-learn: Machine learning
+- TensorFlow: Deep learning
+
+8. BEST PRACTICES
+- Use meaningful variable names
+- Follow PEP 8 style guide
+- Write clean, readable code
+- Use virtual environments
+- Comment complex logic

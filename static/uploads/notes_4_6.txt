@@ -1,0 +1,65 @@
+MATPLOTLIB - DATA VISUALIZATION NOTES
+
+1. INTRODUCTION
+Matplotlib is the most popular Python library for creating static, animated,
+and interactive visualizations.
+
+2. INSTALLATION
+pip install matplotlib
+
+3. BASIC IMPORT
+import matplotlib.pyplot as plt
+import numpy as np
+
+4. LINE PLOT
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+plt.plot(x, y)
+plt.xlabel('X axis')
+plt.ylabel('Y axis')
+plt.title('Line Plot')
+plt.show()
+
+5. BAR CHART
+categories = ['A', 'B', 'C', 'D']
+values = [25, 40, 30, 55]
+plt.bar(categories, values)
+plt.title('Bar Chart')
+plt.show()
+
+6. SCATTER PLOT
+x = np.random.rand(50)
+y = np.random.rand(50)
+plt.scatter(x, y, color='red')
+plt.title('Scatter Plot')
+plt.show()
+
+7. HISTOGRAM
+data = np.random.randn(1000)
+plt.hist(data, bins=30)
+plt.title('Histogram')
+plt.show()
+
+8. PIE CHART
+sizes = [30, 25, 20, 25]
+labels = ['A', 'B', 'C', 'D']
+plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+plt.title('Pie Chart')
+plt.show()
+
+9. SUBPLOTS
+fig, axes = plt.subplots(2, 2)
+axes[0, 0].plot([1, 2, 3])
+axes[0, 1].bar(['A', 'B'], [1, 2])
+axes[1, 0].scatter([1, 2], [3, 4])
+axes[1, 1].hist([1, 2, 2, 3])
+plt.tight_layout()
+plt.show()
+
+10. CUSTOMIZATION
+- Colors: 'red', 'blue', '#FF5733'
+- Line styles: '-', '--', ':', '-.'
+- Markers: 'o', 's', '^', '*'
+- Legends: plt.legend()
+- Grids: plt.grid(True)
+- Save: plt.savefig('plot.png')

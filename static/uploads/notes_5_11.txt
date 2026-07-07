@@ -1,0 +1,91 @@
+POWER BI - FUNDAMENTALS NOTES
+
+1. INTRODUCTION
+Power BI is Microsoft's business analytics service that provides interactive
+visualizations and business intelligence capabilities.
+
+2. KEY COMPONENTS
+- Power BI Desktop: Windows application for creating reports
+- Power BI Service: Cloud-based sharing platform
+- Power BI Mobile: iOS/Android apps
+- Power BI Gateway: Connects on-premise data
+- Power BI Report Server: On-premise hosting
+
+3. DATA SOURCES
+Power BI connects to:
+- Excel, CSV, JSON, XML files
+- SQL Server, MySQL, PostgreSQL, Oracle
+- Web APIs and REST services
+- Azure services (SQL DB, Synapse)
+- Salesforce, Google Analytics
+- SharePoint lists
+
+4. POWER QUERY EDITOR
+Used for data transformation (ETL):
+- Remove duplicates and nulls
+- Filter rows and columns
+- Split/merge columns
+- Pivot/Unpivot data
+- Create custom columns
+- Merge queries (like SQL joins)
+- Append queries (union)
+
+5. DATA MODELING
+- Create relationships between tables
+- Types: One-to-Many, Many-to-Many, One-to-One
+- Star schema (fact + dimension tables)
+- Snowflake schema
+- Calculated columns and measures
+
+6. DAX BASICS (Data Analysis Expressions)
+// Simple aggregations
+Total Sales = SUM(Sales[Amount])
+Average Price = AVERAGE(Products[Price])
+
+// CALCULATE with filters
+Sales 2024 = CALCULATE([Total Sales], YEAR(Date[Date]) = 2024)
+
+// Time intelligence
+YTD Sales = TOTALYTD([Total Sales], Calendar[Date])
+MoM Growth = [Total Sales] - CALCULATE([Total Sales], DATEADD(Calendar[Date], -1, MONTH))
+
+7. VISUALIZATIONS
+- Column/Bar charts
+- Line and Area charts
+- Pie and Donut charts
+- Scatter plots
+- Maps (filled, bubble)
+- Tables and Matrix
+- KPI cards
+- Gauges
+- Tree maps
+- Waterfall charts
+- Slicers (filters)
+
+8. REPORTS VS DASHBOARDS
+Reports:
+- Multiple pages
+- Rich interactivity
+- Created in Desktop
+- Detailed analysis
+
+Dashboards:
+- Single page
+- Pinned tiles from reports
+- Real-time updates
+- High-level overview
+
+9. SHARING AND SECURITY
+- Publish to Power BI Service
+- Workspaces for team collaboration
+- Create apps for distribution
+- Row-level security (RLS)
+- Embed in websites
+
+10. BEST PRACTICES
+- Keep data model simple
+- Use meaningful names
+- Create reusable measures
+- Optimize DAX formulas
+- Use appropriate visuals
+- Test performance regularly

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Resources</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStN27KuAz-or7aXYFayrszuHAMrpBtQAd8bw&s');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            padding-bottom: 15px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            border-radius: 2px;
+        }
+        
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .resource-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .resource-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+        
+        .resource-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .resource-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .resource-content {
+            margin-top: 15px;
+        }
+        
+        .resource-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .resource-link:hover {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            transform: scale(1.05);
+        }
+        
+        audio, video {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        
+        .no-resources {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease;
+        }
+        
+        .no-resources i {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        
+        .no-resources p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+        
+        .back-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-link i {
+            margin-right: 8px;
+        }
+        
+        .back-container {
+            text-align: center;
+            margin-top: 30px;
+            animation: fadeInUp 1.2s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .type-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 10px;
+            color: white;
+        }
+        
+        .text-badge {
+            background-color: #3498db;
+        }
+
+        .audio-badge {
+            background-color: #9b59b6;
+        }
+
+        .video-badge {
+            background-color: #e74c3c;
+        }
+
+        .file-badge {
+            background-color: #2ecc71;
+        }
+
+        .interactive-badge {
+            background-color: #f39c12;
+        }
+
+        .image-badge {
+            background-color: #1abc9c;
+        }
+
+        .resource-iframe {
+            width: 100%;
+            height: 220px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .resource-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-top: 10px;
+            background: #f8f9fa;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fas fa-book-open"></i> Recommended Resources</h2>
+
+        {% if resources %}
+            <div class="resource-list">
+                {% for r in resources %}
+                    <div class="resource-card">
+                        <div class="resource-title">
+                            {% if r[1] == 'text' %}
+                                <i class="fas fa-file-alt"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge text-badge">Notes</span>
+                            {% elif r[1] == 'audio' %}
+                                <i class="fas fa-headphones"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge audio-badge">Audio</span>
+                            {% elif r[1] == 'video' %}
+                                <i class="fas fa-video"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge video-badge">Video</span>
+                            {% elif r[1] == 'interactive' %}
+                                <i class="fas fa-laptop-code"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge interactive-badge">Interactive</span>
+                            {% elif r[1] == 'image' %}
+                                <i class="fas fa-image"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge image-badge">Visual</span>
+                            {% else %}
+                                <i class="fas fa-file"></i>
+                                <span>{{ r[0] }}</span>
+                                <span class="type-badge file-badge">File</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="resource-content">
+                            {% if r[1] == 'text' %}
+                                {% if r[2].startswith('http') %}
+                                    <a href="{{ r[2] }}" target="_blank" class="resource-link">
+                                        <i class="fas fa-eye"></i> View Notes
+                                    </a>
+                                {% else %}
+                                    <a href="/static/{{ r[2] }}" target="_blank" class="resource-link">
+                                        <i class="fas fa-eye"></i> View Notes
+                                    </a>
+                                {% endif %}
+
+                            {% elif r[1] == 'audio' %}
+                                {% if 'youtube' in r[2] or r[2].startswith('http') %}
+                                    <iframe class="resource-iframe" src="{{ r[2] }}"
+                                            allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                {% else %}
+                                    <audio controls style="width:100%">
+                                        <source src="/static/uploads/{{ r[2] }}" type="audio/mpeg">
+                                    </audio>
+                                {% endif %}
+
+                            {% elif r[1] == 'video' %}
+                                {% if 'youtube' in r[2] or r[2].startswith('http') %}
+                                    <iframe class="resource-iframe" src="{{ r[2] }}"
+                                            allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                {% else %}
+                                    <video width="100%" controls>
+                                        <source src="/static/uploads/{{ r[2] }}">
+                                    </video>
+                                {% endif %}
+
+                            {% elif r[1] == 'interactive' %}
+                                <p style="margin-bottom:10px;color:#555;">
+                                    Practice this concept with a live interactive tool.
+                                </p>
+                                <a href="{{ r[2] }}" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Open Interactive
+                                </a>
+
+                            {% elif r[1] == 'image' %}
+                                <img src="{{ r[2] }}" alt="{{ r[0] }}" class="resource-image"
+                                     onerror="this.style.display='none'">
+                                <a href="{{ r[2] }}" target="_blank" class="resource-link" style="margin-top:10px;">
+                                    <i class="fas fa-expand"></i> View Full Image
+                                </a>
+
+                            {% else %}
+                                <a href="/static/uploads/{{ r[2] }}" download class="resource-link">
+                                    <i class="fas fa-download"></i> Download File
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-resources">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>No resources found for this selection.</p>
+            </div>
+        {% endif %}
+
+        <div class="back-container">
+            <a href="/user/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

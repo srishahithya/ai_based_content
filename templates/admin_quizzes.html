@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Quizzes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background-image: url('https://www.shutterstock.com/image-photo/online-education-elearning-concept-person-600nw-2525348649.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Overlay gradient */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.92) 0%, rgba(36, 59, 85, 0.92) 100%);
+            z-index: 1;
+        }
+
+        /* Animated background pattern */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            animation: floatPattern 25s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes floatPattern {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-10px, -10px) rotate(1deg); }
+            66% { transform: translate(10px, -5px) rotate(-1deg); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        h2 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Icon in heading */
+        h2 i {
+            margin-right: 1rem;
+            color: #4facfe;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Animated underline */
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            animation: expandLine 1s ease-out forwards;
+            animation-delay: 0.3s;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        @keyframes expandLine {
+            to { width: 100%; }
+        }
+
+        /* Section headers */
+        h3 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 2rem 0 1.5rem;
+            position: relative;
+            padding-left: 2rem;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        h3 i {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4facfe;
+            font-size: 1.5rem;
+        }
+
+        /* Form container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: -0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label i {
+            color: #4facfe;
+            font-size: 1rem;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Staggered animation for form elements */
+        label:nth-of-type(1) { animation-delay: 0.3s; }
+        select:nth-of-type(1) { animation-delay: 0.4s; }
+        label:nth-of-type(2) { animation-delay: 0.5s; }
+        select:nth-of-type(2) { animation-delay: 0.6s; }
+        label:nth-of-type(3) { animation-delay: 0.7s; }
+        textarea { animation-delay: 0.8s; }
+        label:nth-of-type(4) { animation-delay: 0.9s; }
+        input[type="text"]:nth-of-type(1) { animation-delay: 1s; }
+        label:nth-of-type(5) { animation-delay: 1.1s; }
+        input[type="text"]:nth-of-type(2) { animation-delay: 1.2s; }
+        label:nth-of-type(6) { animation-delay: 1.3s; }
+        input[type="text"]:nth-of-type(3) { animation-delay: 1.4s; }
+        label:nth-of-type(7) { animation-delay: 1.5s; }
+        input[type="text"]:nth-of-type(4) { animation-delay: 1.6s; }
+        label:nth-of-type(8) { animation-delay: 1.7s; }
+        input[type="text"]:nth-of-type(5) { animation-delay: 1.8s; }
+        button { animation-delay: 1.9s; }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Select styling */
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+
+        /* Select option styling */
+        select option {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Focus effects */
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Button styling */
+        button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            justify-self: start;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button i {
+            font-size: 1rem;
+        }
+
+        /* Shimmer effect on button */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Horizontal rule */
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        hr::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            animation: expandLine 3s ease-out infinite;
+            animation-delay: 1s;
+        }
+
+        /* Table container */
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+            overflow-x: auto;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Table header */
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        th i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        th:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Table rows */
+        tr {
+            transition: all 0.3s ease;
+            animation: fadeInRow 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        tr:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Staggered row animations */
+        tr:nth-child(2) { animation-delay: 0.1s; }
+        tr:nth-child(3) { animation-delay: 0.2s; }
+        tr:nth-child(4) { animation-delay: 0.3s; }
+        tr:nth-child(5) { animation-delay: 0.4s; }
+        tr:nth-child(6) { animation-delay: 0.5s; }
+        tr:nth-child(7) { animation-delay: 0.6s; }
+        tr:nth-child(8) { animation-delay: 0.7s; }
+
+        @keyframes fadeInRow {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+        }
+
+        /* Table cells */
+        td {
+            padding: 1.2rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Row hover effects */
+        tr:hover td {
+            background: rgba(79, 172, 254, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        tr:hover td:first-child {
+            border-left: 3px solid #4facfe;
+        }
+
+        /* ID cell styling */
+        td:first-child {
+            font-weight: 600;
+            color: #4facfe;
+            position: relative;
+        }
+
+        td:first-child::before {
+            content: '#';
+            margin-right: 0.3rem;
+            opacity: 0.5;
+        }
+
+        /* Question cell styling */
+        td:nth-child(2) {
+            font-weight: 500;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Back button */
+        .back-container {
+            text-align: center;
+            margin-top: 3rem;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+        }
+
+        .back-container a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-container a i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-container a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-container a:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* Shimmer effect */
+        .back-container a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-container a:hover::before {
+            left: 100%;
+        }
+
+        /* Loading spinner for subject dropdown */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success message */
+        .success-message {
+            display: none;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 10px;
+            color: #4caf50;
+            text-align: center;
+            margin-top: 1rem;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle 20s infinite linear;
+            z-index: 3;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            .form-container,
+            .table-container {
+                padding: 1rem;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="width: 8px; height: 8px; left: 5%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 12px; height: 12px; left: 25%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 45%; animation-delay: 6s;"></div>
+    <div class="particle" style="width: 10px; height: 10px; left: 65%; animation-delay: 9s;"></div>
+    <div class="particle" style="width: 7px; height: 7px; left: 85%; animation-delay: 12s;"></div>
+
+    <div class="container">
+        <header>
+            <h2><i class="fas fa-question-circle"></i>Create Quizzes</h2>
+        </header>
+
+        <div class="form-container">
+            <form method="POST" action="/admin/quizzes/add" id="quizForm">
+                <label for="course"><i class="fas fa-graduation-cap"></i>Course:</label>
+                <select id="course" name="course_id" onchange="loadSubjects()" required>
+                    <option value="">Select Course</option>
+                    {% for c in courses %}
+                    <option value="{{ c[0] }}">{{ c[1] }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="subject">
+                    <i class="fas fa-book"></i>Subject:
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                </label>
+                <select id="subject" name="subject_id" required>
+                    <option value="">Select Subject</option>
+                </select>
+
+                <label for="question" class="full-width"><i class="fas fa-question"></i>Question:</label>
+                <textarea id="question" name="question" required class="full-width"></textarea>
+
+                <label for="option1"><i class="fas fa-check-circle"></i>Option 1:</label>
+                <input type="text" id="option1" name="option1" required>
+
+                <label for="option2"><i class="fas fa-check-circle"></i>Option 2:</label>
+                <input type="text" id="option2" name="option2" required>
+
+                <label for="option3"><i class="fas fa-check-circle"></i>Option 3:</label>
+                <input type="text" id="option3" name="option3" required>
+
+                <label for="option4"><i class="fas fa-check-circle"></i>Option 4:</label>
+                <input type="text" id="option4" name="option4" required>
+
+                <label for="correct_option"><i class="fas fa-star"></i>Correct Option (1-4):</label>
+                <input type="text" id="correct_option" name="correct_option" required>
+
+                <button type="submit" class="full-width">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Quiz
+                </button>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> Quiz added successfully!
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="table-container">
+            <h3><i class="fas fa-list"></i>Existing Quizzes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i>ID</th>
+                        <th><i class="fas fa-question"></i>Question</th>
+                        <th><i class="fas fa-graduation-cap"></i>Course</th>
+                        <th><i class="fas fa-book"></i>Subject</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in quizzes %}
+                    <tr>
+                        <td>{{ q[0] }}</td>
+                        <td>{{ q[1] }}</td>
+                        <td>{{ q[2] }}</td>
+                        <td>{{ q[3] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="back-container">
+            <a href="/admin/dashboard">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced loadSubjects function with loading spinner
+        function loadSubjects() {
+            let courseId = document.getElementById("course").value;
+            let subjectSelect = document.getElementById("subject");
+            let loadingSpinner = document.getElementById("loadingSpinner");
+            
+            // Show loading spinner
+            loadingSpinner.style.display = "inline-block";
+            subjectSelect.disabled = true;
+            
+            // Clear existing options
+            subjectSelect.innerHTML = '<option value="">Loading subjects...</option>';
+            
+            fetch("/admin/quizzes/get_subjects/" + courseId)
+                .then(response => response.json())
+                .then(data => {
+                    subjectSelect.innerHTML = "";
+                    
+                    if (data.subjects && data.subjects.length > 0) {
+                        data.subjects.forEach(s => {
+                            let opt = document.createElement("option");
+                            opt.value = s[0];
+                            opt.text = s[1];
+                            subjectSelect.appendChild(opt);
+                        });
+                    } else {
+                        let opt = document.createElement("option");
+                        opt.value = "";
+                        opt.text = "No subjects available";
+                        subjectSelect.appendChild(opt);
+                    }
+                    
+                    // Hide loading spinner
+                    loadingSpinner.style.display = "none";
+                    subjectSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error fetching subjects:', error);
+                    subjectSelect.innerHTML = '<option value="">Error loading subjects</option>';
+                    loadingSpinner.style.display = "none";
+                    subjectSelect.disabled = false;
+                });
+        }
+
+        // Form submission with loading state
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            const button = this.querySelector('button');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Quiz...';
+            
+            // Simulate form submission (remove this in production)
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i> Quiz Added!';
+                successMessage.style.display = 'block';
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    this.reset();
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-plus-circle"></i> Add Quiz';
+                    successMessage.style.display = 'none';
+                }, 2000);
+            }, 1500);
+            
+            // In production, remove the setTimeout and let the form submit normally
+            // e.preventDefault(); // Uncomment this to prevent actual submission for demo
+        });
+
+        // Add interactive effects to form inputs
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add row click interaction
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', function() {
+                // Remove previous selection
+                document.querySelectorAll('tbody tr').forEach(r => {
+                    r.style.background = '';
+                });
+                
+                // Highlight selected row
+                this.style.background = 'rgba(79, 172, 254, 0.2)';
+                
+                // Add ripple effect
+                const ripple = document.createElement('div');
+                const rect = this.getBoundingClientRect();
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(79, 172, 254, 0.3);
+                    left: 0;
+                    top: 0;
+                    animation: rippleEffect 0.6s ease-out forwards;
+                    pointer-events: none;
+                `;
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleEffect {
+                to {
+                    opacity: 0;
+                    transform: scale(1.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

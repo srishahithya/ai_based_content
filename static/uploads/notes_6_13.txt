@@ -1,0 +1,99 @@
+HTML & CSS - COMPLETE NOTES
+
+1. HTML INTRODUCTION
+HTML (HyperText Markup Language) is the standard markup language for web pages.
+It describes the structure and content of a web page.
+
+2. BASIC HTML STRUCTURE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Page</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+    <p>This is a paragraph.</p>
+</body>
+</html>
+
+3. COMMON HTML TAGS
+- Headings: <h1> to <h6>
+- Paragraph: <p>
+- Links: <a href="url">text</a>
+- Images: <img src="image.jpg" alt="desc">
+- Lists: <ul>, <ol>, <li>
+- Divisions: <div>, <span>
+- Forms: <form>, <input>, <button>
+- Tables: <table>, <tr>, <td>
+
+4. SEMANTIC HTML
+<header>, <nav>, <main>, <article>,
+<section>, <aside>, <footer>
+
+5. CSS INTRODUCTION
+CSS (Cascading Style Sheets) controls the visual presentation of HTML.
+Three ways to apply CSS:
+- Inline: <p style="color: red;">
+- Internal: <style> in head
+- External: <link rel="stylesheet" href="style.css">
+
+6. CSS SELECTORS
+/* Element selector */
+p { color: blue; }
+
+/* Class selector */
+.highlight { background: yellow; }
+
+/* ID selector */
+#header { font-size: 24px; }
+
+/* Descendant selector */
+div p { margin: 10px; }
+
+7. BOX MODEL
+- Content: The actual content
+- Padding: Space inside border
+- Border: The border itself
+- Margin: Space outside border
+
+.box {
+    width: 200px;
+    padding: 20px;
+    border: 2px solid black;
+    margin: 10px;
+}
+
+8. FLEXBOX
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+9. CSS GRID
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+10. RESPONSIVE DESIGN
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}
+
+11. CSS COLORS AND UNITS
+- Colors: red, #ff0000, rgb(255,0,0), hsl(0,100%,50%)
+- Units: px, em, rem, %, vw, vh
+
+12. COMMON PROPERTIES
+- color, background-color
+- font-family, font-size, font-weight
+- margin, padding, border
+- width, height
+- display, position
+- transform, transition, animation

@@ -1,0 +1,60 @@
+PANDAS - DATA ANALYSIS NOTES
+
+1. INTRODUCTION
+Pandas is a powerful data manipulation and analysis library for Python.
+Built on top of NumPy, it provides DataFrame and Series structures.
+
+2. INSTALLATION
+pip install pandas
+
+3. CORE DATA STRUCTURES
+import pandas as pd
+
+# Series (1D labeled array)
+s = pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])
+
+# DataFrame (2D table)
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['NY', 'LA', 'SF']
+})
+
+4. READING DATA
+df = pd.read_csv('data.csv')
+df = pd.read_excel('data.xlsx')
+df = pd.read_json('data.json')
+
+5. INSPECTING DATA
+df.head()         # First 5 rows
+df.tail()         # Last 5 rows
+df.info()         # Data types and info
+df.describe()     # Statistics
+df.shape          # (rows, cols)
+df.columns        # Column names
+
+6. SELECTING DATA
+df['Name']              # Single column
+df[['Name', 'Age']]     # Multiple columns
+df.iloc[0]              # By position
+df.loc[0]               # By label
+df[df['Age'] > 25]      # Filter
+
+7. DATA CLEANING
+df.dropna()                    # Remove missing
+df.fillna(0)                   # Fill missing
+df.drop_duplicates()           # Remove duplicates
+df.rename(columns={'A': 'B'})  # Rename
+
+8. GROUPING AND AGGREGATION
+grouped = df.groupby('City').mean()
+summary = df.groupby('City').agg({'Age': ['mean', 'max', 'min']})
+
+9. MERGING AND JOINING
+merged = pd.merge(df1, df2, on='key')
+concat = pd.concat([df1, df2])
+
+10. VISUALIZATION
+df.plot(kind='bar')
+df.plot(kind='line')
+df.hist()

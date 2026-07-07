@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Learning Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+                        url('https://images.ctfassets.net/xri6xnn81z4a/5aXtYuOYClNeEEe02Hzr7w/bdd9928ff3760cee5978b5c26d461190/e-learning_app.jpg') center/cover no-repeat fixed;
+            animation: backgroundZoom 20s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes backgroundZoom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInScale 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInScale {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.7;
+            animation: gradientRotate 4s linear infinite;
+        }
+
+        @keyframes gradientRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2em;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out;
+        }
+
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 80px; }
+        }
+
+        form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .custom-select {
+            position: relative;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .select-trigger {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 18px 20px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .select-trigger:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .select-trigger.active {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-trigger .placeholder {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .select-trigger .placeholder i {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .select-trigger .arrow {
+            transition: transform 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .select-trigger.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .select-options {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .select-options.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .select-option {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .select-option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .select-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            padding-left: 25px;
+        }
+
+        .select-option:hover::before {
+            transform: scaleY(1);
+        }
+
+        .select-option.selected {
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .select-option i {
+            font-size: 20px;
+            width: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .select-option:hover i {
+            transform: scale(1.2);
+        }
+
+        .select-option.text i { color: #4a90e2; }
+        .select-option.audio i { color: #f39c12; }
+        .select-option.video i { color: #e74c3c; }
+        .select-option.interactive i { color: #27ae60; }
+        .select-option.mixed i { color: #9b59b6; }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        button[type="submit"]:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(-1px);
+        }
+
+        button[type="submit"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Hide the original select but keep it for form submission */
+        select[name="learning_style"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.1);
+            animation: floatRandom 20s infinite ease-in-out;
+        }
+
+        .floating-icon:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            right: 15%;
+            top: 60%;
+            animation-delay: 5s;
+        }
+
+        .floating-icon:nth-child(3) {
+            left: 70%;
+            bottom: 20%;
+            animation-delay: 10s;
+        }
+
+        .floating-icon:nth-child(4) {
+            left: 30%;
+            top: 70%;
+            animation-delay: 15s;
+        }
+
+        @keyframes floatRandom {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(20px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-20px) rotate(270deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 40px 30px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .select-trigger {
+                padding: 15px;
+                font-size: 1em;
+            }
+
+            button[type="submit"] {
+                padding: 15px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <i class="fas fa-book floating-icon"></i>
+        <i class="fas fa-headphones floating-icon"></i>
+        <i class="fas fa-video floating-icon"></i>
+        <i class="fas fa-mouse-pointer floating-icon"></i>
+    </div>
+
+    <div class="form-container">
+        <h2>Select Your Preferred Learning Style</h2>
+
+        <form method="POST">
+            <!-- Original select for form submission -->
+            <select name="learning_style" required id="learningStyleSelect">
+                <option value="">Choose Style</option>
+                <option value="text">Text</option>
+                <option value="audio">Audio</option>
+                <option value="video">Video</option>
+                <option value="interactive">Interactive</option>
+                <option value="mixed">Mixed</option>
+            </select>
+
+            <!-- Custom styled dropdown -->
+            <div class="custom-select">
+                <div class="select-trigger" id="selectTrigger">
+                    <div class="placeholder">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span id="selectedText">Choose Style</span>
+                    </div>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div class="select-options" id="selectOptions">
+                    <div class="select-option text" data-value="text">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Text</span>
+                    </div>
+                    <div class="select-option audio" data-value="audio">
+                        <i class="fas fa-headphones"></i>
+                        <span>Audio</span>
+                    </div>
+                    <div class="select-option video" data-value="video">
+                        <i class="fas fa-video"></i>
+                        <span>Video</span>
+                    </div>
+                    <div class="select-option interactive" data-value="interactive">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <span>Interactive</span>
+                    </div>
+                    <div class="select-option mixed" data-value="mixed">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Mixed</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" disabled>
+                <i class="fas fa-arrow-right"></i> Continue
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectOptions = document.getElementById('selectOptions');
+        const selectedText = document.getElementById('selectedText');
+        const learningStyleSelect = document.getElementById('learningStyleSelect');
+        const submitBtn = document.getElementById('submitBtn');
+        const options = document.querySelectorAll('.select-option');
+
+        selectTrigger.addEventListener('click', () => {
+            selectTrigger.classList.toggle('active');
+            selectOptions.classList.toggle('show');
+        });
+
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                const value = option.dataset.value;
+                const text = option.querySelector('span').textContent;
+                const icon = option.querySelector('i').className;
+                
+                selectedText.innerHTML = `<i class="${icon}"></i> ${text}`;
+                learningStyleSelect.value = value;
+                
+                options.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                
+                selectTrigger.classList.remove('active');
+                selectOptions.classList.remove('show');
+                
+                submitBtn.disabled = false;
+                
+                // Update trigger icon
+                const triggerIcon = selectTrigger.querySelector('.placeholder i');
+                triggerIcon.className = icon;
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-select')) {
+                selectTrigger.classList.remove('active');
+                selectOptions.classList.remove('show');
+            }
+        });
+
+        // Prevent form submission if no option is selected
+        document.querySelector('form').addEventListener('submit', (e) => {
+            if (!learningStyleSelect.value) {
+                e.preventDefault();
+                selectTrigger.classList.add('active');
+                selectOptions.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

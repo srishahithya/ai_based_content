@@ -1,0 +1,123 @@
+JAVASCRIPT - PROGRAMMING NOTES
+
+1. INTRODUCTION
+JavaScript is a high-level, interpreted programming language that runs in browsers
+and servers (Node.js). It's the language of the web.
+
+2. VARIABLES
+// Modern way
+let name = "John";        // Can be reassigned
+const age = 25;           // Cannot be reassigned
+var oldWay = "legacy";    // Avoid using
+
+3. DATA TYPES
+- Number: 42, 3.14
+- String: "Hello", 'World', `template`
+- Boolean: true, false
+- Null: null
+- Undefined: undefined
+- Object: { key: value }
+- Array: [1, 2, 3]
+
+4. OPERATORS
+// Arithmetic: +, -, *, /, %, **
+// Comparison: ==, ===, !=, !==, <, >, <=, >=
+// Logical: &&, ||, !
+// Assignment: =, +=, -=, *=, /=
+
+5. CONTROL FLOW
+// If-else
+if (age >= 18) {
+    console.log("Adult");
+} else {
+    console.log("Minor");
+}
+
+// Ternary
+const status = age >= 18 ? "Adult" : "Minor";
+
+// Switch
+switch (day) {
+    case "Monday": console.log("Start"); break;
+    default: console.log("Other");
+}
+
+6. LOOPS
+// For loop
+for (let i = 0; i < 5; i++) {
+    console.log(i);
+}
+
+// For...of (arrays)
+for (const item of array) {
+    console.log(item);
+}
+
+// For...in (objects)
+for (const key in object) {
+    console.log(key, object[key]);
+}
+
+// While
+while (condition) { ... }
+
+7. FUNCTIONS
+// Function declaration
+function add(a, b) {
+    return a + b;
+}
+
+// Arrow function
+const multiply = (a, b) => a * b;
+
+// Default parameters
+function greet(name = "World") {
+    return `Hello, ${name}!`;
+}
+
+8. ARRAYS
+const fruits = ["apple", "banana", "orange"];
+
+fruits.push("grape");          // Add to end
+fruits.pop();                  // Remove from end
+fruits.map(f => f.toUpperCase());
+fruits.filter(f => f.length > 5);
+fruits.reduce((sum, f) => sum + f.length, 0);
+
+9. OBJECTS
+const person = {
+    name: "Alice",
+    age: 30,
+    greet() {
+        return `Hi, I'm ${this.name}`;
+    }
+};
+
+// Destructuring
+const { name, age } = person;
+
+10. DOM MANIPULATION
+document.getElementById("myId");
+document.querySelector(".myClass");
+element.innerHTML = "New content";
+element.style.color = "red";
+element.addEventListener("click", handler);
+
+11. ASYNC JAVASCRIPT
+// Promises
+fetch("/api/data")
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+// Async/Await
+async function getData() {
+    const response = await fetch("/api/data");
+    return await response.json();
+}
+
+12. ES6+ FEATURES
+- Template literals: `Hello ${name}`
+- Destructuring: const {a, b} = obj;
+- Spread/Rest: ...args
+- Modules: import/export
+- Classes: class MyClass {}

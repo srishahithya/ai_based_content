@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Course & Subject</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+                        url('https://images.ctfassets.net/xri6xnn81z4a/5aXtYuOYClNeEEe02Hzr7w/bdd9928ff3760cee5978b5c26d461190/e-learning_app.jpg') center/cover no-repeat fixed;
+            animation: backgroundShift 25s ease infinite;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: center; }
+            50% { background-position: top; }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInScale 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInScale {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.7;
+            animation: gradientRotate 4s linear infinite;
+        }
+
+        @keyframes gradientRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out;
+        }
+
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+
+        form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.3s; }
+        .form-group:nth-child(3) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        label i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        select {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 50px;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        select option {
+            background: #333;
+            color: white;
+            padding: 10px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        button[type="submit"]:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(-1px);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+            animation: fadeIn 1s ease-out 0.7s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .back-link a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-link a i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-link a:hover i {
+            transform: translateX(-5px);
+        }
+
+        .floating-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.1);
+            animation: floatRandom 20s infinite ease-in-out;
+        }
+
+        .floating-icon:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            right: 15%;
+            top: 60%;
+            animation-delay: 5s;
+        }
+
+        .floating-icon:nth-child(3) {
+            left: 70%;
+            bottom: 20%;
+            animation-delay: 10s;
+        }
+
+        .floating-icon:nth-child(4) {
+            left: 30%;
+            top: 70%;
+            animation-delay: 15s;
+        }
+
+        @keyframes floatRandom {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(20px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-20px) rotate(270deg);
+            }
+        }
+
+        .info-message {
+            background: rgba(102, 126, 234, 0.2);
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 10px 10px 0;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .info-message i {
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 40px 30px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+
+            select {
+                padding: 15px;
+                font-size: 1em;
+            }
+
+            button[type="submit"] {
+                padding: 15px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <i class="fas fa-book floating-icon"></i>
+        <i class="fas fa-graduation-cap floating-icon"></i>
+        <i class="fas fa-microscope floating-icon"></i>
+        <i class="fas fa-laptop-code floating-icon"></i>
+    </div>
+
+    <div class="form-container">
+        <h2>Select Course & Subject</h2>
+        
+        <form method="POST">
+            <div class="info-message">
+                <i class="fas fa-info-circle"></i>
+                <span>Select a course first, then choose a subject from that course</span>
+            </div>
+
+            <div class="form-group">
+                <label for="course_id"><i class="fas fa-book-open"></i>Course:</label>
+                <select name="course_id" id="course_id" onchange="this.form.submit()">
+                    <option value="">Select Course</option>
+                    {% for course in courses %}
+                    <option value="{{ course[0] }}" {% if selected_course == course[0]|string %}selected{% endif %}>
+                        {{ course[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            {% if subjects %}
+            <div class="form-group">
+                <label for="subject_id"><i class="fas fa-bookmark"></i>Subject:</label>
+                <select name="subject_id" id="subject_id">
+                    <option value="">Select Subject</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject[0] }}">{{ subject[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit">
+                    <i class="fas fa-eye"></i>
+                    View Resources
+                </button>
+            </div>
+            {% endif %}
+        </form>
+
+        <div class="back-link">
+            <a href="/user/dashboard">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

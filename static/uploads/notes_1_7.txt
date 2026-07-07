@@ -1,0 +1,66 @@
+NUMPY - NUMERICAL COMPUTING NOTES
+
+1. INTRODUCTION
+NumPy (Numerical Python) is the fundamental package for scientific computing in Python.
+Provides powerful N-dimensional array objects and tools for array operations.
+
+2. INSTALLATION
+pip install numpy
+
+3. CREATING ARRAYS
+import numpy as np
+
+# From list
+arr = np.array([1, 2, 3, 4, 5])
+
+# Zeros and ones
+zeros = np.zeros((3, 3))
+ones = np.ones((2, 4))
+
+# Range
+arr = np.arange(0, 10, 2)  # [0, 2, 4, 6, 8]
+
+# Random
+rand = np.random.rand(3, 3)
+
+4. ARRAY OPERATIONS
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+# Element-wise
+add = a + b       # [5, 7, 9]
+mul = a * b       # [4, 10, 18]
+
+# Statistical
+mean = np.mean(a)
+std = np.std(a)
+sum_val = np.sum(a)
+
+5. INDEXING AND SLICING
+arr = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(arr[0, 1])    # 2
+print(arr[:, 1])    # [2, 5, 8]
+print(arr[1:, :2])  # [[4, 5], [7, 8]]
+
+6. RESHAPING
+arr = np.arange(12)
+reshaped = arr.reshape(3, 4)
+
+7. BROADCASTING
+Enables operations between arrays of different shapes.
+
+8. LINEAR ALGEBRA
+# Matrix multiplication
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+C = np.dot(A, B)
+
+# Inverse
+inv = np.linalg.inv(A)
+
+9. USE CASES
+- Data preprocessing
+- Image processing
+- Scientific calculations
+- Machine learning foundations
+- Signal processing

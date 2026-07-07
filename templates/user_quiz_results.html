@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .results-wrapper {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .results-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #3498db, #2ecc71, #f1c40f, #e74c3c);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .score-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: #f1f1f1;
+            stroke-width: 10;
+        }
+
+        .score-circle-progress {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .score-excellent { stroke: #28a745; }
+        .score-good { stroke: #ffc107; }
+        .score-poor { stroke: #dc3545; }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .score-excellent-text { color: #28a745; }
+        .score-good-text { color: #ffc107; }
+        .score-poor-text { color: #dc3545; }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            width: 45%;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .message i {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .excellent {
+            background-color: #d4edda;
+            color: #155724;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+        .good {
+            background-color: #fff3cd;
+            color: #856404;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+        }
+        .poor {
+            background-color: #f8d7da;
+            color: #721c24;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        /* ---- Cognitive Analysis Section ---- */
+        .cognitive-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cognitive-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #9b59b6, #3498db, #1abc9c);
+        }
+
+        .cognitive-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cognitive-title i {
+            color: #9b59b6;
+        }
+
+        .cognitive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .cognitive-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .cognitive-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cognitive-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .cognitive-card .card-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .cognitive-card .card-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .engagement-bar {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .engagement-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .state-breakdown {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .state-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .recommendation-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .recommendation-box i {
+            font-size: 1.5rem;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .recommendation-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            margin-top: 25px;
+        }
+
+        .timeline-title {
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #e9ecef;
+        }
+
+        .timeline-segment {
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 5px;
+        }
+
+        .timeline-segment:hover {
+            opacity: 0.8;
+        }
+
+        .timeline-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* ---- Action Buttons ---- */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            margin: 10px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:nth-child(2) {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn:nth-child(3) {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+            box-shadow: 0 4px 10px rgba(155, 89, 182, 0.3);
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .cognitive-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .results-container, .cognitive-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="results-wrapper">
+        <!-- Quiz Score Section -->
+        <div class="results-container">
+            <h1><i class="fas fa-trophy"></i> Quiz Results</h1>
+
+            <div class="score-circle">
+                <svg width="200" height="200">
+                    <circle class="score-circle-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="score-circle-progress
+                        {% if score >= 80 %}score-excellent
+                        {% elif score >= 60 %}score-good
+                        {% else %}score-poor
+                        {% endif %}"
+                        cx="100" cy="100" r="90"
+                        stroke-dasharray="565.48"
+                        stroke-dashoffset="{{ 565.48 - (565.48 * score / 100) }}">
+                    </circle>
+                </svg>
+                <div class="score-text
+                    {% if score >= 80 %}score-excellent-text
+                    {% elif score >= 60 %}score-good-text
+                    {% else %}score-poor-text
+                    {% endif %}">
+                    {{ score }}%
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value">{{ correct }}</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ total }}</div>
+                    <div class="stat-label">Total Questions</div>
+                </div>
+            </div>
+
+            <div class="message
+                {% if score >= 80 %}excellent
+                {% elif score >= 60 %}good
+                {% else %}poor
+                {% endif %}">
+                {% if score >= 80 %}
+                    <i class="fas fa-star"></i> Excellent! Outstanding performance!
+                {% elif score >= 60 %}
+                    <i class="fas fa-thumbs-up"></i> Good job! You're on the right track!
+                {% else %}
+                    <i class="fas fa-book"></i> Keep practicing! You'll do better next time!
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Cognitive Analysis Section -->
+        {% if cognitive_summary and cognitive_summary.total_captures > 0 %}
+        <div class="cognitive-container">
+            <div class="cognitive-title">
+                <i class="fas fa-brain"></i> Cognitive State Analysis
+            </div>
+
+            <div class="cognitive-grid">
+                <div class="cognitive-card">
+                    <div class="card-icon">
+                        {% if cognitive_summary.dominant_state == 'focused' %}🎯
+                        {% elif cognitive_summary.dominant_state == 'happy' %}😊
+                        {% elif cognitive_summary.dominant_state == 'engaged' %}🧠
+                        {% elif cognitive_summary.dominant_state == 'confused' %}😕
+                        {% elif cognitive_summary.dominant_state == 'tired' %}😴
+                        {% elif cognitive_summary.dominant_state == 'stressed' %}😰
+                        {% else %}😐{% endif %}
+                    </div>
+                    <div class="card-label">Dominant State</div>
+                    <div class="card-value">{{ cognitive_summary.dominant_state|capitalize }}</div>
+                </div>
+
+                <div class="cognitive-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-label">Avg Confidence</div>
+                    <div class="card-value">{{ cognitive_summary.avg_confidence }}%</div>
+                </div>
+
+                <div class="cognitive-card">
+                    <div class="card-icon">📸</div>
+                    <div class="card-label">Total Captures</div>
+                    <div class="card-value">{{ cognitive_summary.total_captures }}</div>
+                </div>
+
+                <div class="cognitive-card">
+                    <div class="card-icon">
+                        {% if cognitive_summary.engagement_level == 'Highly Engaged' %}🟢
+                        {% elif cognitive_summary.engagement_level == 'Moderately Engaged' %}🟡
+                        {% else %}🔴{% endif %}
+                    </div>
+                    <div class="card-label">Engagement</div>
+                    <div class="card-value" style="font-size: 1.1rem;">{{ cognitive_summary.engagement_level }}</div>
+                </div>
+            </div>
+
+            <!-- Engagement Bar -->
+            <div class="engagement-bar">
+                <div class="engagement-fill" style="width: {{ cognitive_summary.avg_confidence }}%;
+                    background: {% if cognitive_summary.avg_confidence >= 70 %}linear-gradient(to right, #27ae60, #2ecc71)
+                    {% elif cognitive_summary.avg_confidence >= 40 %}linear-gradient(to right, #f39c12, #f1c40f)
+                    {% else %}linear-gradient(to right, #e74c3c, #c0392b){% endif %};">
+                    {{ cognitive_summary.avg_confidence }}% Confidence
+                </div>
+            </div>
+
+            <!-- State Breakdown Tags -->
+            {% if cognitive_summary.state_counts %}
+            <div class="state-breakdown">
+                {% for state, count in cognitive_summary.state_counts.items() %}
+                <div class="state-tag" style="background:
+                    {% if state == 'focused' %}#27ae60
+                    {% elif state == 'happy' %}#2ecc71
+                    {% elif state == 'engaged' %}#3498db
+                    {% elif state == 'neutral' %}#f39c12
+                    {% elif state == 'confused' %}#e67e22
+                    {% elif state == 'tired' %}#e74c3c
+                    {% elif state == 'stressed' %}#c0392b
+                    {% else %}#95a5a6{% endif %};">
+                    {% if state == 'focused' %}🎯
+                    {% elif state == 'happy' %}😊
+                    {% elif state == 'engaged' %}🧠
+                    {% elif state == 'confused' %}😕
+                    {% elif state == 'tired' %}😴
+                    {% elif state == 'stressed' %}😰
+                    {% else %}😐{% endif %}
+                    {{ state|capitalize }}: {{ count }}x
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- State Timeline -->
+            {% if cognitive_history %}
+            <div class="timeline-section">
+                <div class="timeline-title">State Timeline (during quiz)</div>
+                <div class="timeline-bar">
+                    {% for entry in cognitive_history %}
+                    <div class="timeline-segment" style="flex: 1; background:
+                        {% if entry.emotion == 'focused' %}#27ae60
+                        {% elif entry.emotion == 'happy' %}#2ecc71
+                        {% elif entry.emotion == 'engaged' %}#3498db
+                        {% elif entry.emotion == 'neutral' %}#f39c12
+                        {% elif entry.emotion == 'confused' %}#e67e22
+                        {% elif entry.emotion == 'tired' %}#e74c3c
+                        {% elif entry.emotion == 'stressed' %}#c0392b
+                        {% else %}#95a5a6{% endif %};"
+                        title="{{ entry.emotion|capitalize }} ({{ entry.confidence }}%)">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="timeline-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div> Focused</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div> Happy</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div> Engaged</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div> Neutral</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> Confused</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> Tired</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div> Stressed</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recommendation -->
+            <div class="recommendation-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>{{ cognitive_summary.recommendation }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="results-container" style="padding: 25px;">
+            <div class="action-buttons" style="margin: 0;">
+                <a href="/user/quiz" class="btn"><i class="fas fa-redo"></i> Take Another Quiz</a>
+                <a href="/user/adaptive_learning" class="btn"><i class="fas fa-brain"></i> Adaptive Learning</a>
+                <a href="/user/dashboard" class="btn"><i class="fas fa-home"></i> Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        {% if score >= 80 %}
+        document.addEventListener('DOMContentLoaded', function() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createConfetti(), i * 100);
+            }
+        });
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + '%';
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 10 + 5;
+            confetti.style.width = size + 'px';
+            confetti.style.height = size + 'px';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+        {% endif %}
+    </script>
+</body>
+</html>

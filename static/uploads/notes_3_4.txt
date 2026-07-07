@@ -1,0 +1,98 @@
+JAVA PROGRAMMING - COMPLETE NOTES
+
+1. INTRODUCTION TO JAVA
+Java is a popular, object-oriented programming language developed by Sun Microsystems in 1995.
+Write Once, Run Anywhere (WORA) - Java runs on any device with JVM.
+
+2. KEY FEATURES
+- Platform independent (JVM)
+- Object-oriented
+- Strongly typed
+- Automatic memory management (Garbage Collection)
+- Multi-threaded
+- Secure and robust
+
+3. BASIC SYNTAX
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+
+4. DATA TYPES
+Primitive:
+- int, long, short, byte (integers)
+- float, double (decimals)
+- char (single character)
+- boolean (true/false)
+
+Reference:
+- String, Arrays, Objects
+
+5. VARIABLES AND OPERATORS
+int age = 20;
+String name = "Student";
+double price = 99.99;
+
+// Operators: +, -, *, /, %, ==, !=, &&, ||
+
+6. CONTROL STATEMENTS
+// If-else
+if (age >= 18) {
+    System.out.println("Adult");
+} else {
+    System.out.println("Minor");
+}
+
+// For loop
+for (int i = 0; i < 5; i++) {
+    System.out.println(i);
+}
+
+// While loop
+int count = 0;
+while (count < 5) {
+    count++;
+}
+
+7. OBJECT-ORIENTED CONCEPTS
+- Class and Object
+- Inheritance (extends)
+- Polymorphism (method overriding)
+- Encapsulation (private fields, getters/setters)
+- Abstraction (abstract classes, interfaces)
+
+class Student {
+    private String name;
+
+    public Student(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+8. COLLECTIONS FRAMEWORK
+- ArrayList: Dynamic array
+- LinkedList: Doubly linked list
+- HashMap: Key-value pairs
+- HashSet: Unique elements
+- TreeMap: Sorted key-value
+
+9. EXCEPTION HANDLING
+try {
+    int result = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Error: " + e.getMessage());
+} finally {
+    System.out.println("Always executes");
+}
+
+10. POPULAR FRAMEWORKS
+- Spring Boot: Web applications
+- Hibernate: Database ORM
+- JUnit: Testing
+- Maven/Gradle: Build tools
+- Android SDK: Mobile apps

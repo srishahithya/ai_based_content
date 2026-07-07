@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Resources</title>
+</head>
+<body>
+    <h2>Recommended Resources</h2>
+
+    {% if resources %}
+        <ul>
+        {% for r in resources %}
+            <li>
+                <strong>{{ r[0] }}</strong> - 
+                {% if r[1] == 'pdf' %}
+                    <a href="/static/uploads/{{ r[2] }}" target="_blank">View PDF</a>
+                {% elif r[1] == 'video' %}
+                    <video width="400" controls>
+                        <source src="/static/uploads/{{ r[2] }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% elif r[1] == 'audio' %}
+                    <audio controls>
+                        <source src="/static/uploads/{{ r[2] }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                {% else %}
+                    <a href="/static/uploads/{{ r[2] }}" target="_blank">Download</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No resources available for this course/subject.</p>
+    {% endif %}
+
+    <a href="/user/dashboard">Back to Dashboard</a>
+</body>
+</html>

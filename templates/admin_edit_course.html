@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Course</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background-image: url('https://img.freepik.com/premium-photo/concept-education-adds-new-skills-business-education-professional-courses_1253175-2730.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Overlay gradient */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.92) 0%, rgba(36, 59, 85, 0.92) 100%);
+            z-index: 1;
+        }
+
+        /* Animated background pattern */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            animation: floatPattern 25s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes floatPattern {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-10px, -10px) rotate(1deg); }
+            66% { transform: translate(10px, -5px) rotate(-1deg); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+        }
+
+        /* Header section */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        h2 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Icon in heading */
+        h2 i {
+            margin-right: 1rem;
+            color: #4facfe;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Animated underline */
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            animation: expandLine 1s ease-out forwards;
+            animation-delay: 0.3s;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+        }
+
+        @keyframes expandLine {
+            to { width: 100%; }
+        }
+
+        /* Form container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form styling */
+        form {
+            display: grid;
+            gap: 2rem;
+        }
+
+        label {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        label i {
+            color: #4facfe;
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        label:nth-of-type(1) { animation-delay: 0.3s; }
+        label:nth-of-type(2) { animation-delay: 0.5s; }
+        label:nth-of-type(3) { animation-delay: 0.7s; }
+        label:nth-of-type(4) { animation-delay: 0.9s; }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Input styling */
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        input[type="text"]:nth-of-type(1) { animation-delay: 0.4s; }
+        textarea { animation-delay: 0.6s; }
+        select { animation-delay: 0.8s; }
+        input[type="text"]:nth-of-type(2) { animation-delay: 1s; }
+
+        /* Select styling */
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+
+        /* Select option styling */
+        select option {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Focus effects */
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Button styling */
+        button {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 1.2s;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            justify-self: center;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        button i {
+            font-size: 1.2rem;
+        }
+
+        /* Shimmer effect on button */
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Back button */
+        .back-container {
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1.4s;
+            opacity: 0;
+        }
+
+        .back-container a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-container a i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-container a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-container a:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* Shimmer effect */
+        .back-container a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-container a:hover::before {
+            left: 100%;
+        }
+
+        /* Edit indicator */
+        .edit-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            color: #ffc107;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+
+        .edit-indicator i {
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Success message */
+        .success-message {
+            display: none;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 10px;
+            color: #4caf50;
+            text-align: center;
+            margin-top: 1rem;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle 20s infinite linear;
+            z-index: 3;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            label {
+                font-size: 1.1rem;
+            }
+
+            input[type="text"],
+            textarea,
+            select {
+                font-size: 1rem;
+            }
+
+            button {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="width: 8px; height: 8px; left: 5%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 12px; height: 12px; left: 25%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 45%; animation-delay: 6s;"></div>
+    <div class="particle" style="width: 10px; height: 10px; left: 65%; animation-delay: 9s;"></div>
+    <div class="particle" style="width: 7px; height: 7px; left: 85%; animation-delay: 12s;"></div>
+
+    <div class="container">
+        <header>
+            <h2><i class="fas fa-edit"></i>Edit Course</h2>
+            <div class="edit-indicator">
+                <i class="fas fa-info-circle"></i>
+                You are editing course: <strong>{{ course[1] }}</strong>
+            </div>
+        </header>
+
+        <div class="form-container">
+            <form method="POST" id="editForm">
+                <label for="name"><i class="fas fa-book"></i>Name:</label>
+                <input type="text" id="name" name="name" value="{{ course[1] }}" required>
+
+                <label for="description"><i class="fas fa-align-left"></i>Description:</label>
+                <textarea id="description" name="description" required>{{ course[2] }}</textarea>
+
+                <label for="level"><i class="fas fa-signal"></i>Level:</label>
+                <select id="level" name="level">
+                    <option value="Beginner" {% if course[3]=='Beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="Intermediate" {% if course[3]=='Intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="Advanced" {% if course[3]=='Advanced' %}selected{% endif %}>Advanced</option>
+                </select>
+
+                <label for="subjects"><i class="fas fa-tags"></i>Subjects (comma-separated):</label>
+                <input type="text" id="subjects" name="subjects" value="{{ subjects|join(', ') }}">
+
+                <button type="submit" id="updateBtn">
+                    <i class="fas fa-save"></i>
+                    Update
+                </button>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> Course updated successfully!
+                </div>
+            </form>
+        </div>
+
+        <div class="back-container">
+            <a href="/admin/courses">
+                <i class="fas fa-arrow-left"></i>
+                Back to Courses
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive effects to form inputs
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+
+            // Add change detection
+            input.addEventListener('input', function() {
+                if (this.value !== this.defaultValue) {
+                    this.style.borderColor = 'rgba(255, 193, 7, 0.5)';
+                } else {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                }
+            });
+        });
+
+        // Form submission with loading state
+        const editForm = document.getElementById('editForm');
+        const updateBtn = document.getElementById('updateBtn');
+        const successMessage = document.getElementById('successMessage');
+        
+        editForm.addEventListener('submit', function(e) {
+            // Show loading state
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            
+            // Simulate update process (remove this in production)
+            setTimeout(() => {
+                updateBtn.innerHTML = '<i class="fas fa-check"></i> Updated!';
+                successMessage.style.display = 'block';
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+                    successMessage.style.display = 'none';
+                    
+                    // Reset border colors
+                    inputs.forEach(input => {
+                        input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    });
+                }, 3000);
+            }, 1500);
+            
+            // In production, remove the setTimeout and let the form submit normally
+            // e.preventDefault(); // Uncomment this to prevent actual submission for demo
+        });
+
+        // Add character counter for description
+        const description = document.getElementById('description');
+        const charCounter = document.createElement('div');
+        charCounter.style.cssText = `
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            text-align: right;
+            margin-top: 0.5rem;
+        `;
+        description.parentElement.appendChild(charCounter);
+        
+        function updateCharCounter() {
+            const length = description.value.length;
+            charCounter.textContent = `${length} characters`;
+        }
+        
+        description.addEventListener('input', updateCharCounter);
+        updateCharCounter();
+
+        // Add ripple effect to button
+        updateBtn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                left: ${x}px;
+                top: ${y}px;
+                animation: ripple 0.6s ease-out forwards;
+                pointer-events: none;
+            `;
+
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
