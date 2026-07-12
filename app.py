@@ -1143,14 +1143,22 @@ from datetime import datetime
 def adaptive_learning():
     if "user_id" not in session:
         return redirect("/user/login")
-    
-    # Get quiz results if available
-    results = session.get('quiz_results', {})
-    score = results.get('score', 0)
-    correct = results.get('correct', 0)
-    total = results.get('total', 0)
-    
-    return render_template("user_adaptive_learning.html", 
+
+    user_id = session["user_id"]
+
+    # Get last quiz score from database (not session, which gets cleared)
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("SELECT score, correct, total FROM quiz_history WHERE user_id=? ORDER BY id DESC LIMIT 1", (user_id,))
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        score, correct, total = row
+    else:
+        score, correct, total = 0, 0, 0
+
+    return render_template("user_adaptive_learning.html",
                          score=score,
                          correct=correct,
                          total=total)
@@ -1264,12 +1272,12 @@ def get_recommendations():
     confidence_score = face_data.get('confidence_score', 50)
     dominant_emotion = face_data.get('dominant_emotion', 'neutral')
 
-    # --- 2. Get latest quiz performance & cognitive summary ---
-    quiz_results = session.get('quiz_results', {})
-    quiz_score = quiz_results.get('score', 0)
-    cog_summary = quiz_results.get('cognitive_summary', {}) or {}
-    cognitive_state = cog_summary.get('dominant_state', dominant_emotion)
-    engagement_level = cog_summary.get('engagement_level')
+    # --- 2. Get latest quiz performance from database ---
+    c.execute("SELECT score, cognitive_state, engagement_level FROM quiz_history WHERE user_id=? ORDER BY id DESC LIMIT 1", (user_id,))
+    last_quiz = c.fetchone()
+    quiz_score = last_quiz[0] if last_quiz else 0
+    cognitive_state = last_quiz[1] if last_quiz and last_quiz[1] else dominant_emotion
+    engagement_level = last_quiz[2] if last_quiz and last_quiz[2] else None
 
     # --- 3. Dynamically decide target difficulty based on cognitive state ---
     target_difficulty = decide_target_difficulty(
