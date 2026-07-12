@@ -1238,56 +1238,13 @@ def capture_face():
                 "all_emotions": emotion_scores
             })
 
-        # ---------------- FALLBACK: Performance-based simulation ----------------
+        # ---------------- FER NOT AVAILABLE (free tier warning) ----------------
         else:
-            user_id = session["user_id"]
-            conn = sqlite3.connect("database.db")
-            c = conn.cursor()
-            c.execute("SELECT score FROM quiz_history WHERE user_id=? ORDER BY id DESC LIMIT 5", (user_id,))
-            past = [r[0] for r in c.fetchall()]
-            conn.close()
-
-            avg_score = sum(past) / len(past) if past else 50
-
-            if avg_score >= 80:
-                weights = {'focused': 45, 'engaged': 30, 'happy': 15, 'confused': 5, 'tired': 3, 'stressed': 2}
-            elif avg_score >= 50:
-                weights = {'focused': 25, 'engaged': 20, 'confused': 25, 'tired': 15, 'stressed': 10, 'happy': 5}
-            else:
-                weights = {'confused': 30, 'tired': 25, 'stressed': 20, 'focused': 10, 'engaged': 10, 'happy': 5}
-
-            states = list(weights.keys())
-            probs = list(weights.values())
-            cognitive_state = random.choices(states, weights=probs, k=1)[0]
-            confidence_score = random.randint(55, 92)
-
-            raw_emotion_map = {
-                'focused': 'neutral', 'engaged': 'happy', 'confused': 'surprise',
-                'tired': 'sad', 'stressed': 'fear', 'happy': 'happy'
-            }
-            detected_emotion = raw_emotion_map.get(cognitive_state, 'neutral')
-
-            emotion_scores = {'angry': random.randint(1, 10), 'disgust': random.randint(1, 5),
-                              'fear': random.randint(5, 20), 'happy': random.randint(10, 40),
-                              'sad': random.randint(5, 15), 'surprise': random.randint(5, 20),
-                              'neutral': random.randint(20, 50)}
-            emotion_scores[detected_emotion] = confidence_score
-
-            session['face_analysis'] = {
-                'dominant_emotion': cognitive_state,
-                'raw_emotion': detected_emotion,
-                'confidence_score': confidence_score,
-                'timestamp': datetime.now().isoformat()
-            }
-
             return jsonify({
-                "success": True,
-                "dominant_emotion": cognitive_state,
-                "raw_emotion": detected_emotion,
-                "confidence_score": confidence_score,
-                "message": f"{cognitive_state.capitalize()} detected ({confidence_score}% confidence)",
-                "all_emotions": emotion_scores
-            })
+                "success": False,
+                "error": "fer_unavailable",
+                "message": "FER module not available - free tier does not support TensorFlow. Please run locally for real emotion detection."
+            }), 200
 
     except Exception as e:
         return jsonify({"error": f"Processing failed: {str(e)}"}), 500
